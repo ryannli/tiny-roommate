@@ -60,13 +60,17 @@ All data stays on your machine. Nothing leaves your laptop.
   <img src="assets/previews/golden_retriever.gif" width="128" alt="Golden Retriever" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="assets/previews/blue_buddy.gif" width="128" alt="Blue Buddy" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/schnauzer.gif" width="128" alt="Schnauzer" />
 </p>
 <p align="center">
-  <sub><strong>Tabby Cat</strong> · <strong>Golden Retriever</strong> · <strong>Blue Buddy</strong></sub><br/>
+  <sub><strong>Tabby Cat</strong> · <strong>Golden Retriever</strong> · <strong>Blue Buddy</strong> · <strong>Schnauzer</strong></sub><br/>
   <sub>Want to add your own? See <a href="SPRITE-SPEC.md">Sprite Spec</a> — generate a spritesheet with any AI image tool, drop it in, done.</sub>
 </p>
 
 ## Quick Start
+
+> **Note:** TinyRoommate currently runs on **macOS only**. Windows and Linux support is on the roadmap.
 
 You need [Node.js](https://nodejs.org/) (v18+), [Rust](https://rustup.rs/), and [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (for the AI brain).
 

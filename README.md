@@ -70,18 +70,15 @@ All data stays on your machine. Nothing leaves your laptop.
 
 You need [Node.js](https://nodejs.org/) (v18+), [Rust](https://rustup.rs/), and [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (for the AI brain).
 
-Fork this repo, then:
+Click **Fork** at the top of this page to create your own copy, then clone it and run:
 
 ```bash
-git clone https://github.com/<your-username>/tinyroommate.git
 cd tinyroommate
 npm install
 npx tauri dev
 ```
 
-This is meant to be *your* pet — fork it, customize it, make it weird.
-
-First launch compiles Rust (~2-3 min). After that it's instant.
+This is meant to be *your* pet — fork it, customize it, make it weird. First launch compiles Rust (~2-3 min). After that it's instant.
 
 > **No Claude Code?** The pet still runs — walks around, fidgets, reacts to clicks — but can't think, talk, or see your screen. Install Claude Code to unlock its full brain.
 

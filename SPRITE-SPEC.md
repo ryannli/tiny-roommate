@@ -74,4 +74,25 @@ python3 scripts/process-spritesheet-v4.py input.png \
   --cols 8 --rows 9 --target 128
 ```
 
-Then add your character to `index.html` and `src/characters.js`. See [README](README.md#make-it-yours) for details.
+## Register Your Character
+
+Add an entry to `src/characters.js`:
+
+```js
+// In CHARACTERS:
+your_character: { defaultName: 'Name', displayName: 'Your Character' },
+
+// In VOICE:
+your_character: {
+  greet: '👋',
+  acks: ['~♪', '😊', 'hehe', 'hey!', '💛'],
+  petHold: 'hehe~ 😊',
+  petLines: ['hehe~', 'more...', 'nice~ 😊', "don't stop~"],
+  petFallback: 'hehe~ 😊',
+  tapLines: ['hm?', '!', 'hey?', '~'],
+  tapFallback: 'hey?',
+  chatFallback: 'hmm?',
+},
+```
+
+That's it — the character picker UI is generated automatically from this file.

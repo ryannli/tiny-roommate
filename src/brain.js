@@ -38,7 +38,7 @@ async function seedPetDataIfNeeded(projectRoot) {
   // If .pet-data doesn't exist, copy from template and stamp born date
   await runShell(
     '[ -d ' + dataPath + ' ] || { cp -R ' + templatePath + ' ' + dataPath +
-    ' && sed -i "" "s/^born:.*/born: ' + today + '/" ' + dataPath + '/config.md; }'
+    ' && perl -i -pe ' + shellQuote('s/^born:.*/born: ' + today + '/') + ' ' + dataPath + '/config.md; }'
   );
 }
 

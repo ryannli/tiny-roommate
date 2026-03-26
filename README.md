@@ -65,6 +65,7 @@ All data stays on your machine. Nothing leaves your laptop.
 
 Your pet reacts to what's happening — not randomly, but contextually.
 
+<div align="center">
 <table>
 <tr>
 <td align="center" width="33%"><img src="assets/states/work.gif" width="96" /><br/><sub><b>You're deep in code</b><br/>It works alongside you</sub></td>
@@ -82,6 +83,7 @@ Your pet reacts to what's happening — not randomly, but contextually.
 <td align="center"><img src="assets/states/idle.gif" width="96" /><br/><sub><b>Just vibing</b><br/>Silence is often the right choice</sub></td>
 </tr>
 </table>
+</div>
 
 ## Characters
 

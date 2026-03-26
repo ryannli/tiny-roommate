@@ -166,7 +166,7 @@ export function initInteraction(pet) {
     pet.llmBusy = true;
     var result = await think('Your owner is petting and rubbing you gently. You feel warm and loved. React.');
     if (result) {
-      pet.showBubble(result.text, Math.max(6000, result.text.length * 200), true, result.reactions);
+      pet.showBubble(result.text, Math.max(8000, result.text.length * 300), true, result.reactions);
     } else {
       pet.showBubble(pet.voice().petFallback, 2000, true);
     }
@@ -195,7 +195,7 @@ export function initInteraction(pet) {
     var context = buildContextString(timeSignals, getIdleSeconds(), pet.lastScreenContext);
     var result = await think("Your owner tapped you to get your attention. React briefly.\n\nEnvironment:\n" + context);
     if (result) {
-      pet.showBubble(result.text, Math.max(6000, result.text.length * 200), true, result.reactions);
+      pet.showBubble(result.text, Math.max(8000, result.text.length * 300), true, result.reactions);
       if (result.state && STATES[result.state]) {
         pet.sprite.setState(result.state, STATES[result.state].loop ? null : function() { pet.sprite.setState('idle'); });
       }

@@ -170,7 +170,7 @@ export function initBehavior(pet) {
 
     if (result) {
       if (result.text) {
-        pet.showBubble(result.text, Math.max(6000, result.text.length * 200), true, result.reactions);
+        pet.showBubble(result.text, Math.max(8000, result.text.length * 300), true, result.reactions);
       }
       if (result.state && STATES[result.state]) {
         pet.sprite.setState(result.state, STATES[result.state].loop ? null : function() { returnToBase(); });
@@ -319,7 +319,7 @@ export function initBehavior(pet) {
     );
 
     if (result) {
-      pet.showBubble(result.text, Math.max(6000, result.text.length * 200), true, result.reactions);
+      pet.showBubble(result.text, Math.max(8000, result.text.length * 300), true, result.reactions);
       if (result.state && STATES[result.state]) {
         pet.sprite.setState(result.state, STATES[result.state].loop ? null : function() { returnToBase(); });
       }

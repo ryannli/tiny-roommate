@@ -35,25 +35,25 @@ Every few minutes, a speech bubble pops up — sometimes random (*"~♪"*), some
 <td width="50%" valign="top">
 
 **It sees what you see**<br/>
-<sub>Screen capture + Claude Vision — knows if you're coding, designing, or doom-scrolling.</sub>
+Screen capture + Claude Vision — knows if you're coding, designing, or doom-scrolling.
 
 **It remembers you**<br/>
-<sub>A living memory that grows over time. Not a stateless chatbot.</sub>
+A living memory that grows over time. Not a stateless chatbot.
 
 **It has personality**<br/>
-<sub>Sassy, chill, philosophical — you configure it. Knows when to shut up.</sub>
+Sassy, chill, philosophical — you configure it. Knows when to shut up.
 
 </td>
 <td width="50%" valign="top">
 
 **It has feelings**<br/>
-<sub>Pet it → purrs. Ignore it → it gets a little sad. It notices when you're around.</sub>
+Pet it → purrs. Ignore it → it gets a little sad. It notices when you're around.
 
 **It keeps a diary**<br/>
-<sub>Plain Markdown files — its journal, what it saw on your screen, daily summaries. You can read them.</sub>
+Plain Markdown files — its journal, what it saw on your screen, daily summaries. You can read them.
 
 **100% local**<br/>
-<sub>All data stays on your machine. Nothing leaves your laptop.</sub>
+All data stays on your machine. Nothing leaves your laptop.
 
 </td>
 </tr>

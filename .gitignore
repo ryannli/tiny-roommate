@@ -6,6 +6,5 @@ public/models
 public/sprites/cat.png
 public/sprites/cat_transparent.png
 package-lock.json
-.pet-data/*
-!.pet-data/CLAUDE.md
+.pet-data/
 .claude/settings.local.json

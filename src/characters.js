@@ -1,5 +1,12 @@
 // Character voice lines per sprite
 
+export var CHARACTERS = {
+  tabby_cat: { defaultName: 'Mochi', species: 'Cat' },
+  blue_buddy: { defaultName: 'Buddy', species: 'Buddy' },
+  golden_retriever: { defaultName: 'Cooper', species: 'Dog' },
+  _default: { defaultName: 'Mochi', species: 'Pet' },
+};
+
 export var VOICE = {
   tabby_cat: {
     greet: '🐱',

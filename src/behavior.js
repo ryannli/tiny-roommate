@@ -2,7 +2,7 @@
 
 import { Command } from '@tauri-apps/plugin-shell';
 import { STATES } from './sprite.js';
-import { getTimeSignals, getIdleSeconds, captureScreenContext, buildContextString } from './signals.js';
+import { getTimeSignals, getIdleSeconds, captureScreenContext, buildContextString, isScreenRecordingDenied } from './signals.js';
 import { think, getActivityLog, generateDailyDigest, loadConfig, ensurePetDataPath } from './brain.js';
 
 var WALK_SPEED = 50;
@@ -21,6 +21,7 @@ export function initBehavior(pet) {
   // PERCEPTION LAYER — persisted to .tinyroommate/owner-perceptions.md
   // =========================================================================
   var lastPerceptionDate = null; // track date for daily rollover
+  var screenPermissionNudged = false;
 
   async function captureLoop() {
     try {
@@ -30,6 +31,11 @@ export function initBehavior(pet) {
         var time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         await appendToFile('owner-perceptions.md', '- [' + time + '] ' + context);
         console.log('📸 Perception:', context);
+      }
+      // Nudge once if screen recording is denied
+      if (!screenPermissionNudged && isScreenRecordingDenied()) {
+        screenPermissionNudged = true;
+        pet.showBubble("i can't see your screen yet! enable Screen Recording in System Settings for me? 🥺", 8000, true);
       }
     } catch (err) {
       console.error('📸 Capture error:', err);
@@ -245,6 +251,7 @@ export function initBehavior(pet) {
     var startTime = performance.now();
 
     function step() {
+      if (!pet.isWalking) return;
       var elapsed = (performance.now() - startTime) / 1000;
       var progress = Math.min(elapsed / duration, 1);
       var ease = 1 - Math.pow(1 - progress, 2);

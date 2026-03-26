@@ -30,24 +30,21 @@ async function runShell(script) {
   return Command.create('bash', ['-lc', script]).execute();
 }
 
-async function seedPetDataIfNeeded(targetPath) {
-  const target = shellQuote(targetPath);
-
+async function seedPetDataIfNeeded(projectRoot) {
+  var dataPath = shellQuote(projectRoot + '/.pet-data');
+  var templatePath = shellQuote(projectRoot + '/.pet-data-template');
+  var today = new Date().toISOString().slice(0, 10);
+  // If .pet-data doesn't exist, copy from template and stamp born date
   await runShell(
-    'mkdir -p ' + target + '; ' +
-    '[ -f ' + target + '/config.md ] || printf "%s\\n" "---" "owner_name: " "sprite: tabby_cat" "---" "" > ' + target + '/config.md; ' +
-    '[ -f ' + target + '/me-identity.md ] || printf "%s\\n" "---" "name: Mochi" "species: Cat" "born: " "---" "" > ' + target + '/me-identity.md; ' +
-    '[ -f ' + target + '/me-journal.md ] || : > ' + target + '/me-journal.md; ' +
-    '[ -f ' + target + '/owner-memory.md ] || : > ' + target + '/owner-memory.md; ' +
-    '[ -f ' + target + '/owner-perceptions.md ] || : > ' + target + '/owner-perceptions.md; ' +
-    '[ -f ' + target + '/owner-timeline.md ] || : > ' + target + '/owner-timeline.md'
+    '[ -d ' + dataPath + ' ] || { cp -R ' + templatePath + ' ' + dataPath +
+    ' && sed -i "" "s/^born:.*/born: ' + today + '/" ' + dataPath + '/config.md; }'
   );
 }
 
 export async function ensurePetDataPath() {
   if (petDataReady && PET_DATA_PATH) return PET_DATA_PATH;
-  const { dataPath } = await resolvePetDataPaths();
-  await seedPetDataIfNeeded(dataPath);
+  const { dataPath, projectRoot } = await resolvePetDataPaths();
+  await seedPetDataIfNeeded(projectRoot);
   PET_DATA_PATH = dataPath;
   petDataReady = true;
   return PET_DATA_PATH;
@@ -99,35 +96,18 @@ async function writePetFile(filename, content) {
 // --- Config loading/saving ---
 
 export async function loadConfig() {
-  const identityRaw = await readPetFile('me-identity.md');
   const configRaw = await readPetFile('config.md');
-
-  if (identityRaw) {
-    const { fields } = parseFrontmatter(identityRaw);
-    if (fields.name) config.pet.name = fields.name;
-    if (fields.species) config.pet.species = fields.species;
-    if (fields.born) config.pet.born = fields.born;
-  }
 
   if (configRaw) {
     const { fields } = parseFrontmatter(configRaw);
+    if (fields.pet_name) config.pet.name = fields.pet_name;
+    if (fields.species) config.pet.species = fields.species;
+    if (fields.born) config.pet.born = fields.born;
     if (fields.owner_name) config.owner.name = fields.owner_name;
     if (fields.sprite) config.sprite = fields.sprite;
   }
 
   return { ...config, pet: { ...config.pet }, owner: { ...config.owner } };
-}
-
-export async function saveIdentityField(key, value) {
-  const raw = await readPetFile('me-identity.md');
-  const { fields, body } = parseFrontmatter(raw);
-  fields[key] = value;
-  await writePetFile('me-identity.md', serializeFrontmatter(fields, body));
-
-  // Update in-memory config
-  if (key === 'name') config.pet.name = value;
-  if (key === 'species') config.pet.species = value;
-  if (key === 'born') config.pet.born = value;
 }
 
 export async function saveConfigField(key, value) {
@@ -137,6 +117,9 @@ export async function saveConfigField(key, value) {
   await writePetFile('config.md', serializeFrontmatter(fields, body));
 
   // Update in-memory config
+  if (key === 'pet_name') config.pet.name = value;
+  if (key === 'species') config.pet.species = value;
+  if (key === 'born') config.pet.born = value;
   if (key === 'owner_name') config.owner.name = value;
   if (key === 'sprite') config.sprite = value;
 }

@@ -1,8 +1,9 @@
 // Settings panel, context menu, sprite selection
 
 import { invoke } from '@tauri-apps/api/core';
-import { SpriteAnimator } from './sprite.js';
-import { saveIdentityField, saveConfigField } from './brain.js';
+import { SpriteAnimator, getSpriteRenderOptions } from './sprite.js';
+import { saveConfigField } from './brain.js';
+import { CHARACTERS } from './characters.js';
 
 var SETTINGS_SIZE = { width: 560, height: 580 };
 
@@ -103,7 +104,7 @@ export function initSettings(pet) {
 
     if (newPetName && newPetName !== pet.petName) {
       pet.petName = newPetName;
-      saveIdentityField('name', pet.petName);
+      saveConfigField('pet_name', pet.petName);
       document.getElementById('chat-input').placeholder = 'Say something to ' + pet.petName + '...';
       pet.showBubble('call me ' + pet.petName + ' now!', 3000, true);
     }
@@ -130,7 +131,10 @@ export function initSettings(pet) {
 
     var previews = document.querySelectorAll('.sprite-preview');
     previewAnimators = Array.prototype.map.call(previews, function(cvs, index) {
-      var animator = new SpriteAnimator(cvs, cvs.dataset.src, { scale: 1 });
+      var animator = new SpriteAnimator(cvs, cvs.dataset.src, Object.assign(
+        { scale: 1 },
+        getSpriteRenderOptions(cvs.dataset.src.split('/').pop().replace(/\.png$/, ''))
+      ));
       return {
         animator: animator,
         sequenceIndex: index % PREVIEW_SEQUENCE.length,
@@ -185,8 +189,18 @@ export function initSettings(pet) {
       if (spriteName !== pet.currentSprite) {
         pet.currentSprite = spriteName;
         pet.sprite.image.src = '/sprites/' + spriteName + '.png';
+        pet.sprite.edgeClear = getSpriteRenderOptions(spriteName).edgeClear || 0;
         saveConfigField('sprite', spriteName);
-        pet.showBubble('new look!', 2000, true);
+
+        // Update name & species to match character
+        var charInfo = CHARACTERS[spriteName] || CHARACTERS._default;
+        pet.petName = charInfo.defaultName;
+        saveConfigField('pet_name', charInfo.defaultName);
+        saveConfigField('species', charInfo.species);
+        document.getElementById('setting-pet-name').value = charInfo.defaultName;
+        document.getElementById('chat-input').placeholder = 'Say something to ' + pet.petName + '...';
+
+        pet.showBubble('call me ' + charInfo.defaultName + '!', 2000, true);
       }
       settingsOverlay.querySelectorAll('.sprite-option').forEach(function(b) {
         b.classList.toggle('active', b.dataset.sprite === pet.currentSprite);

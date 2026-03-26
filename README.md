@@ -45,6 +45,9 @@ Sassy, chill, philosophical — you configure it. Knows when to shut up.
 **❤️ It needs you**<br/>
 Hearts decay over time. Ignore it → sad. Pet it → purrs. Neglect it → sick.
 
+**🔒 100% local**<br/>
+All data stays on your machine. Memories, screen captures, journals — nothing leaves your laptop.
+
 </td>
 </tr>
 </table>
@@ -54,11 +57,11 @@ Hearts decay over time. Ignore it → sad. Pet it → purrs. Neglect it → sick
 ## Characters
 
 <p align="center">
-  <img src="assets/previews/tabby_cat.png" width="128" alt="Tabby Cat" />
+  <img src="assets/previews/tabby_cat.gif" width="128" alt="Tabby Cat" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/golden_retriever.png" width="128" alt="Golden Retriever" />
+  <img src="assets/previews/golden_retriever.gif" width="128" alt="Golden Retriever" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/blue_buddy.png" width="128" alt="Blue Buddy" />
+  <img src="assets/previews/blue_buddy.gif" width="128" alt="Blue Buddy" />
 </p>
 <p align="center">
   <sub><strong>Tabby Cat</strong> · <strong>Golden Retriever</strong> · <strong>Blue Buddy</strong></sub><br/>

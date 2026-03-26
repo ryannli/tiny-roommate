@@ -8,6 +8,15 @@ const COLS = 8;
 const ROWS = 9;
 export const SHEET_FPS = 6;
 const FRAME_BLEED_PAD = 1;
+const DEFAULT_EDGE_CLEAR = 0;
+
+export const SPRITE_RENDER_OVERRIDES = {
+  golden_retriever: { edgeClear: 2 },
+};
+
+export function getSpriteRenderOptions(spriteName) {
+  return SPRITE_RENDER_OVERRIDES[spriteName] || {};
+}
 
 // 9-state sprite sheet (8 columns × 9 rows)
 export const STATES = {
@@ -38,6 +47,9 @@ export class SpriteAnimator {
     this.lastFrameTime = 0;
     this.onFinish = null;
     this.scale = typeof options.scale === 'number' ? options.scale : 1.5;
+    this.edgeClear = Math.max(0, Math.floor(
+      typeof options.edgeClear === 'number' ? options.edgeClear : DEFAULT_EDGE_CLEAR
+    ));
     this.frameCache = [];
 
     this.canvas.width = FRAME_W * this.scale;
@@ -171,6 +183,21 @@ export class SpriteAnimator {
       FRAME_BLEED_PAD + FRAME_W, FRAME_BLEED_PAD + FRAME_H, FRAME_BLEED_PAD, FRAME_BLEED_PAD
     );
 
+    this.clearFrameEdges(ctx);
+
     return canvas;
+  }
+
+  clearFrameEdges(ctx) {
+    if (!this.edgeClear) return;
+
+    const border = Math.min(this.edgeClear, Math.floor(FRAME_W / 2), Math.floor(FRAME_H / 2));
+    const x = FRAME_BLEED_PAD;
+    const y = FRAME_BLEED_PAD;
+
+    ctx.clearRect(x, y, FRAME_W, border);
+    ctx.clearRect(x, y + FRAME_H - border, FRAME_W, border);
+    ctx.clearRect(x, y, border, FRAME_H);
+    ctx.clearRect(x + FRAME_W - border, y, border, FRAME_H);
   }
 }

@@ -178,6 +178,13 @@ export function initInteraction(pet) {
 
   // --- Single click ---
   async function onPetClicked() {
+    // Stop walking if in motion
+    if (pet.isWalking) {
+      pet.isWalking = false;
+      pet.canvas.style.transform = 'scaleX(1)';
+      pet.sprite.setState('idle');
+      return;
+    }
     pet.gainHeart();
     pet.sprite.setState('talk', function() { pet.sprite.setState('idle'); });
     if (pet.llmBusy) {

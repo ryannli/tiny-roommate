@@ -48,6 +48,7 @@ export function getIdleSeconds() {
 // -D flag not available, but screencapture without -m captures the main display
 // We capture all displays and let Claude figure out what's on screen
 const SCREENSHOT_PATH = '/tmp/tinyroommate-screenshot.png';
+var screenRecordingDenied = false;
 
 export async function captureScreenContext() {
   try {
@@ -68,6 +69,12 @@ export async function captureScreenContext() {
     // Step 2: Capture that display
     var captureResult = await Command.create('screencapture', ['-x', '-D', displayNum, SCREENSHOT_PATH]).execute();
     console.log('📸 screencapture exit:', captureResult.code);
+
+    if (captureResult.code !== 0) {
+      screenRecordingDenied = true;
+      return null;
+    }
+    screenRecordingDenied = false;
 
     // Step 3: Ask Claude to describe it
     var result = await Command.create('claude', [
@@ -91,6 +98,10 @@ export async function captureScreenContext() {
     Command.create('rm', [SCREENSHOT_PATH]).execute().catch(() => {});
     return null;
   }
+}
+
+export function isScreenRecordingDenied() {
+  return screenRecordingDenied;
 }
 
 // Get active app name — TODO: implement with Tauri native plugin

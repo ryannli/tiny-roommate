@@ -1,5 +1,7 @@
 // Hearts / affection system
 
+import { getConfig } from './brain.js';
+
 export function initHearts(pet) {
   var MAX_HEARTS = 5;
   var heartsValue = MAX_HEARTS;
@@ -52,10 +54,11 @@ export function initHearts(pet) {
 
   // Together counter
   var togetherEl = document.getElementById('together');
-  var BORN_DATE = '2026-03-23T00:00:00';
 
   function updateTogether() {
-    var born = new Date(BORN_DATE);
+    var bornStr = getConfig().pet.born;
+    if (!bornStr) { togetherEl.textContent = ''; return; }
+    var born = new Date(bornStr + 'T00:00:00');
     var now = new Date();
     var diffMs = now - born;
     var diffHours = Math.floor(diffMs / (1000 * 60 * 60));

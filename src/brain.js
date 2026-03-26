@@ -190,6 +190,11 @@ export function parseResponse(raw) {
           state = parsed.state;
           if (parsed.text) text = parsed.text;
           if (parsed.r && Array.isArray(parsed.r)) reactions = parsed.r.slice(0, 2);
+          // Fall back to text appearing before the JSON block
+          if (!text) {
+            var beforeJson = raw.slice(0, raw.indexOf(jsonMatch[i])).trim();
+            if (beforeJson) text = beforeJson.replace(/^["']|["']$/g, '').trim();
+          }
           break;
         }
       } catch {}

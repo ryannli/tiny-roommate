@@ -4,10 +4,7 @@
 
 <h1 align="center">TinyRoommate</h1>
 
-<h3 align="center">
-  A tiny AI companion that lives on your desktop.<br/>
-  It sees your screen, remembers your habits, and writes a diary about you.
-</h3>
+<h4 align="center">A tiny AI companion that lives on your desktop. It sees your screen, remembers your habits, and writes a diary about you.</h4>
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-macOS-black?style=flat-square" alt="macOS" />

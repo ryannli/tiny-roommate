@@ -85,6 +85,17 @@ First launch compiles Rust (~2-3 min). After that it's instant.
 
 > **No Claude Code?** The pet still runs — walks around, fidgets, reacts to clicks — but can't think, talk, or see your screen. Install Claude Code to unlock its full brain.
 
+### Linux Prerequisites
+
+Before running for the first time, install Tauri's system dependencies and an emoji font:
+
+```bash
+sudo apt-get install -y \
+  pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev \
+  libayatana-appindicator3-dev librsvg2-dev libssl-dev \
+  fonts-noto-color-emoji
+```
+
 ### Screen Recording (optional, macOS)
 
 For the pet to "see" your screen, grant permission in **System Settings > Privacy & Security > Screen Recording** for your terminal app, then restart.

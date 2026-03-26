@@ -47,7 +47,7 @@ It's not an assistant. It's a roommate.
 <td width="50%" valign="top">
 
 **It has feelings**<br/>
-<sub>Pet it → purrs. Ignore it → sad. Neglect it → sick.</sub>
+<sub>Pet it → purrs. Ignore it → it gets a little sad. It notices when you're around.</sub>
 
 **It keeps a diary**<br/>
 <sub>Plain Markdown files — its journal, what it saw on your screen, daily summaries. You can read them.</sub>

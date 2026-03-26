@@ -61,23 +61,46 @@ All data stays on your machine. Nothing leaves your laptop.
 
 <br/>
 
+## A Day in Its Life
+
+Your pet reacts to what's happening — not randomly, but contextually.
+
+<table>
+<tr>
+<td align="center" width="33%"><img src="assets/states/work.gif" width="96" /><br/><sub><b>You're deep in code</b><br/>It works alongside you</sub></td>
+<td align="center" width="33%"><img src="assets/states/looking_around.gif" width="96" /><br/><sub><b>You switch apps</b><br/>It notices and observes</sub></td>
+<td align="center" width="33%"><img src="assets/states/playful.gif" width="96" /><br/><sub><b>You're watching YouTube</b><br/>It starts playing around</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/states/sleep.gif" width="96" /><br/><sub><b>It's past midnight</b><br/>"you should rest..." 💤</sub></td>
+<td align="center"><img src="assets/states/happy.gif" width="96" /><br/><sub><b>You pet it</b><br/>Affection +1, purrs</sub></td>
+<td align="center"><img src="assets/states/sad.gif" width="96" /><br/><sub><b>You've been away</b><br/>Hearts decay over time</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/states/walk.gif" width="96" /><br/><sub><b>Nothing happening</b><br/>It wanders your desktop</sub></td>
+<td align="center"><img src="assets/states/drag.gif" width="96" /><br/><sub><b>You drag it</b><br/>Swing physics, not amused</sub></td>
+<td align="center"><img src="assets/states/idle.gif" width="96" /><br/><sub><b>Just vibing</b><br/>Silence is often the right choice</sub></td>
+</tr>
+</table>
+
 ## Characters
 
-Pick your companion. Each has its own animations and voice.
+Pick a companion — or **make your own**.
 
 <p align="center">
-  <img src="assets/previews/tabby_cat.gif" width="100" alt="Tabby Cat" />
-  &nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/golden_retriever.gif" width="100" alt="Golden Retriever" />
-  &nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/blue_buddy.gif" width="100" alt="Blue Buddy" />
-  &nbsp;&nbsp;&nbsp;
-  <img src="assets/previews/schnauzer.gif" width="100" alt="Schnauzer" />
+  <img src="assets/previews/tabby_cat.gif" width="120" alt="Tabby Cat" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/golden_retriever.gif" width="120" alt="Golden Retriever" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/blue_buddy.gif" width="120" alt="Blue Buddy" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/schnauzer.gif" width="120" alt="Schnauzer" />
 </p>
 <p align="center">
-  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer</sub><br/>
-  <sub><a href="SPRITE-SPEC.md">Create your own</a> with any AI image generator</sub>
+  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer</sub>
 </p>
+
+Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for details.
 
 ---
 

@@ -39,8 +39,8 @@ Sassy, chill, philosophical — you configure it. It knows when to shut up.
 </td>
 <td width="50%">
 
-**It needs you**
-Hearts decay over time. Ignore it and it gets sad. Pet it and it purrs. Neglect it and it gets sick.
+**It has feelings**
+Pet it and it purrs. Ignore it and it gets a little sad. It notices when you're around.
 
 **It keeps a diary**
 Plain Markdown files you can read — what it saw on your screen, what it thinks about you, daily summaries.

@@ -49,6 +49,19 @@ export function initBubble(pet) {
     pet.gainHeart();
   }
 
+  function onReply() {
+    if (pet.openChat) pet.openChat();
+  }
+
+  // Inline reply button
+  var replyBtn = document.getElementById('bubble-reply');
+  if (replyBtn) {
+    replyBtn.addEventListener('click', function() {
+      bubbleEl.classList.remove('show');
+      onReply();
+    });
+  }
+
   function clamp(value, min, max) {
     if (max < min) return min;
     return Math.max(min, Math.min(max, value));
@@ -445,6 +458,10 @@ export function initBubble(pet) {
     if (event.payload && event.payload.reaction) {
       onReaction(event.payload.reaction);
     }
+  });
+
+  listenEvent('bubble:reply', function() {
+    onReply();
   });
 
   listenEvent('bubble:hidden', function(event) {

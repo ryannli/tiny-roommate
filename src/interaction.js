@@ -214,6 +214,8 @@ export function initInteraction(pet) {
     pet.showBubble('?');
   }
 
+  pet.openChat = openChat;
+
   chatInput.addEventListener('keydown', async function(e) {
     if (e.key === 'Enter') {
       var text = chatInput.value.trim();

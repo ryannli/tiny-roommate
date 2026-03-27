@@ -1,11 +1,12 @@
 // Character voice lines per sprite
 
 export var CHARACTERS = {
-  tabby_cat: { defaultName: 'Mochi', displayName: 'Tabby Cat' },
+  tabby_cat: { defaultName: 'Phoebe', displayName: 'Tabby Cat' },
   blue_buddy: { defaultName: 'Buddy', displayName: 'Blue Buddy' },
   golden_retriever: { defaultName: 'Cooper', displayName: 'Golden Retriever' },
   schnauzer: { defaultName: 'Pepper', displayName: 'Schnauzer' },
-  _default: { defaultName: 'Mochi' },
+  tuxedo_cat: { defaultName: 'Luna', displayName: 'Tuxedo Cat' },
+  _default: { defaultName: 'Phoebe' },
 };
 
 export var VOICE = {
@@ -48,6 +49,16 @@ export var VOICE = {
     tapLines: ['hm?', '!', 'arf?', '~'],
     tapFallback: 'arf?',
     chatFallback: 'arf?',
+  },
+  tuxedo_cat: {
+    greet: '🐱',
+    acks: ['~♪', '😊', 'mew~', 'nya!', '🩶'],
+    petHold: 'purrrr~ 😊',
+    petLines: ['purrrr~', 'more...', 'mmm~ 😊', "don't stop~"],
+    petFallback: 'purrrr~ 😊',
+    tapLines: ['hm?', '!', 'mew?', '~'],
+    tapFallback: 'mew?',
+    chatFallback: 'mew?',
   },
   _default: {
     greet: '👋',

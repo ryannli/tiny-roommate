@@ -1,5 +1,5 @@
 ---
-pet_name: Mochi
+pet_name: Phoebe
 owner_name:
 sprite: tabby_cat
 born:

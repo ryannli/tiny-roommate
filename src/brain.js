@@ -17,7 +17,7 @@ async function resolvePetDataPaths() {
 
 // Structured config loaded from frontmatter
 let config = {
-  pet: { name: 'Mochi', born: '' },
+  pet: { name: 'Phoebe', born: '' },
   owner: { name: '' },
   sprite: 'tabby_cat',
 };
@@ -291,7 +291,7 @@ export async function generateDailyDigest() {
   if (!claudeAvailable || activityLog.length < 3) return null;
 
   const logText = activityLog.map(a => `${a.time}: ${a.description || a.type}`).join('\n');
-  const petName = config.pet.name || 'Mochi';
+  const petName = config.pet.name || 'Phoebe';
 
   try {
     const result = await Command.create('claude', [

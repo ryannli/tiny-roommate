@@ -16,7 +16,7 @@ var pet = {
   appWindow: getCurrentWindow(),
   sprite: null,
   currentSprite: 'tabby_cat',
-  petName: 'Mochi',
+  petName: 'Phoebe',
   ownerName: '',
   isWalking: false,
   llmBusy: false,

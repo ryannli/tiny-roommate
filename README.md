@@ -70,12 +70,28 @@ Pick a companion — or **make your own**.
   <img src="assets/previews/blue_buddy.gif" width="120" alt="Blue Buddy" />
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="assets/previews/schnauzer.gif" width="120" alt="Schnauzer" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/coco.gif" width="120" alt="Coco" />
 </p>
 <p align="center">
-  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer</sub>
+  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer · Coco</sub>
 </p>
 
 Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for details.
+
+To add a new pet like `Coco`, the repo convention is:
+
+```bash
+python3 -m pip install --user pillow numpy
+python3 scripts/process-spritesheet-v4.py path/to/coco-source.png \
+  -o public/sprites/coco.png \
+  --cols 8 --rows 9 --target 128
+python3 scripts/generate-preview-gif.py public/sprites/coco.png \
+  -o assets/previews/coco.gif \
+  --still-output assets/previews/coco.png
+```
+
+Then register `coco` in `src/characters.js`. The Settings picker is generated from that file automatically.
 
 ## A Day in Its Life
 
@@ -113,7 +129,20 @@ You need [Node.js](https://nodejs.org/) (v18+), [Rust](https://rustup.rs/), and 
 gh repo fork ryannli/tinyroommate --clone
 cd tinyroommate
 npm install
-npx tauri dev
+npm run tauri dev
+```
+
+`npm run tauri dev` picks an open port automatically.
+If you want to force a specific port, set `TAURI_DEV_PORT`:
+
+```bash
+TAURI_DEV_PORT=5180 npm run tauri dev
+```
+
+If you are only running the frontend without Tauri, `npm run dev` also accepts a fixed port through `PORT`:
+
+```bash
+PORT=5180 npm run dev
 ```
 
 <details>

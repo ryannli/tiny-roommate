@@ -3,6 +3,7 @@
 export var CHARACTERS = {
   tabby_cat: { defaultName: 'Mochi', displayName: 'Tabby Cat' },
   blue_buddy: { defaultName: 'Buddy', displayName: 'Blue Buddy' },
+  coco: { defaultName: 'Coco', displayName: 'Coco' },
   golden_retriever: { defaultName: 'Cooper', displayName: 'Golden Retriever' },
   schnauzer: { defaultName: 'Pepper', displayName: 'Schnauzer' },
   _default: { defaultName: 'Mochi' },
@@ -28,6 +29,16 @@ export var VOICE = {
     tapLines: ['hm?', '!', 'hey?', '~'],
     tapFallback: 'hey?',
     chatFallback: 'hmm?',
+  },
+  coco: {
+    greet: '🐶',
+    acks: ['~♪', '😊', 'hehe', 'woof!', '🩷'],
+    petHold: 'tail wagging intensifies~ 😊',
+    petLines: ['more pets~', 'play with me?', 'best day ever~ 😊', "don't stop~"],
+    petFallback: '*happy panting* 😊',
+    tapLines: ['hm?', '!', 'woof?', '~'],
+    tapFallback: 'woof?',
+    chatFallback: 'woof?',
   },
   golden_retriever: {
     greet: '🐶',

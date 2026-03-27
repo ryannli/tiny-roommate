@@ -66,13 +66,33 @@ STYLE: [e.g. "cute, photo-realistic" or "pixel art" or "chibi anime"]
 
 V4 is the canonical sprite-sheet cleanup pipeline for TinyRoommate.
 
+Install the image tooling once:
+
+```bash
+python3 -m pip install --user pillow numpy
+```
+
 After generating, run:
 
 ```bash
-python3 scripts/process-spritesheet-v4.py input.png \
+python3 scripts/process-spritesheet-v4.py path/to/your-character-source.png \
   -o public/sprites/your_character.png \
   --cols 8 --rows 9 --target 128
 ```
+
+Then generate the preview assets used by the README:
+
+```bash
+python3 scripts/generate-preview-gif.py public/sprites/your_character.png \
+  -o assets/previews/your_character.gif \
+  --still-output assets/previews/your_character.png
+```
+
+That gives you the two files the repo convention uses:
+
+- `public/sprites/your_character.png`: the in-app spritesheet
+- `assets/previews/your_character.gif`: animated preview for docs
+- `assets/previews/your_character.png`: still preview image
 
 ## Register Your Character
 
@@ -95,4 +115,4 @@ your_character: {
 },
 ```
 
-That's it — the character picker UI is generated automatically from this file.
+The character picker UI is generated automatically from this file. Once `public/sprites/your_character.png` exists, your character appears in Settings automatically.

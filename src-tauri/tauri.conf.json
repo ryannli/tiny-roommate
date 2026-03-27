@@ -5,8 +5,8 @@
   "identifier": "com.tinyroommate.app",
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://localhost:5173",
-    "beforeDevCommand": "npm run dev",
+    "devUrl": null,
+    "beforeDevCommand": null,
     "beforeBuildCommand": "npm run build"
   },
   "app": {

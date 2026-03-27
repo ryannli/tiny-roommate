@@ -34,11 +34,11 @@ async function seedPetDataIfNeeded(projectRoot) {
   var dataPath = shellQuote(projectRoot + '/.pet-data');
   var templatePath = shellQuote(projectRoot + '/.pet-data-template');
   var now = new Date();
-  var today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  var timestamp = now.toISOString();
   // If .pet-data doesn't exist, copy from template and stamp born date
   await runShell(
     '[ -d ' + dataPath + ' ] || { cp -R ' + templatePath + ' ' + dataPath +
-    ' && perl -i -pe ' + shellQuote('s/^born:.*/born: ' + today + '/') + ' ' + dataPath + '/config.md; }'
+    ' && perl -i -pe ' + shellQuote('s/^born:.*/born: ' + timestamp + '/') + ' ' + dataPath + '/config.md; }'
   );
 }
 

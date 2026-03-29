@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    background: rgba(255, 252, 248, 0.98);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: 'SF Pro Rounded', system-ui, -apple-system, sans-serif;
+  }
+  #settings-panel {
+    width: 100%; height: 100%;
+    overflow-y: auto;
+  }
+  .settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid rgba(200, 160, 120, 0.12);
+    -webkit-app-region: drag;
+  }
+  .settings-header h2 {
+    font: 600 15px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: #3d2b22;
+  }
+  .settings-close {
+    -webkit-app-region: no-drag;
+    width: 24px; height: 24px;
+    border: none; background: none;
+    font-size: 16px; color: #9a7a6a;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .settings-close:hover { background: rgba(200, 160, 120, 0.15); }
+  .settings-section {
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(200, 160, 120, 0.08);
+  }
+  .settings-section:last-child { border-bottom: none; }
+  .settings-section label {
+    display: block;
+    font: 500 11px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: rgba(150, 110, 80, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .settings-section input[type="text"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid rgba(200, 160, 120, 0.25);
+    border-radius: 10px;
+    font: 13px 'SF Pro Rounded', system-ui, sans-serif;
+    color: #3d2b22;
+    background: rgba(255, 255, 255, 0.7);
+    outline: none;
+    transition: border-color 0.15s ease;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .settings-section input[type="text"]:focus { border-color: rgba(220, 140, 90, 0.5); }
+  .settings-section input[type="text"]::placeholder { color: rgba(150, 110, 80, 0.35); }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slider-row input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(200, 160, 120, 0.25);
+    outline: none;
+  }
+  .slider-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: rgba(220, 150, 110, 0.8);
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+  .slider-value {
+    font: 500 12px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: rgba(150, 110, 80, 0.6);
+    min-width: 36px;
+    text-align: right;
+  }
+  .sprite-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .sprite-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 12px;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: none;
+    text-align: center;
+    font: 13px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: #4a3830;
+    min-height: 156px;
+  }
+  .sprite-option:hover { background: rgba(220, 170, 130, 0.1); }
+  .sprite-option.active {
+    border-color: rgba(220, 150, 110, 0.4);
+    background: rgba(255, 230, 200, 0.2);
+    font-weight: 600;
+  }
+  .sprite-option canvas { width: 104px; height: 104px; image-rendering: auto; }
+</style>
+</head>
+<body>
+  <div id="settings-panel">
+    <div class="settings-header">
+      <h2>Settings</h2>
+      <button class="settings-close" id="settings-close">&times;</button>
+    </div>
+    <div class="settings-section">
+      <label>Pet Name</label>
+      <input type="text" id="setting-pet-name" placeholder="Phoebe" />
+    </div>
+    <div class="settings-section">
+      <label>Call me</label>
+      <input type="text" id="setting-owner-name" placeholder="How should your pet call you?" />
+    </div>
+    <div class="settings-section">
+      <label>Pet Size</label>
+      <div class="slider-row">
+        <input type="range" id="setting-pet-scale" min="0.8" max="2.5" step="0.1" value="1.5" />
+        <span class="slider-value" id="pet-scale-value">1.5x</span>
+      </div>
+    </div>
+    <div class="settings-section">
+      <label>Character</label>
+      <div class="sprite-options" id="sprite-options"></div>
+    </div>
+  </div>
+  <script type="module" src="/src/settings-ui.js"></script>
+</body>
+</html>

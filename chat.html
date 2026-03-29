@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    background: transparent;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  #chat-input {
+    position: fixed;
+    bottom: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 16px);
+    padding: 8px 12px;
+    border: 1.5px solid rgba(220, 150, 110, 0.35);
+    border-radius: 14px;
+    font: 13px 'SF Pro Rounded', system-ui, -apple-system, sans-serif;
+    outline: none;
+    background: rgba(255, 252, 248, 0.97);
+    box-shadow: 0 3px 12px rgba(180, 100, 60, 0.14), 0 0 0 1px rgba(220, 150, 110, 0.08);
+    color: #3d2b22;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  #chat-input::placeholder { color: rgba(150, 110, 80, 0.4); }
+  #chat-input:focus { border-color: rgba(220, 140, 90, 0.5); }
+</style>
+</head>
+<body>
+  <input id="chat-input" type="text" autofocus />
+  <script type="module" src="/src/chat.js"></script>
+</body>
+</html>

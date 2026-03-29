@@ -71,27 +71,25 @@ Pick a companion — or **make your own**.
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="assets/previews/schnauzer.gif" width="120" alt="Schnauzer" />
   &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/previews/tuxedo_cat.gif" width="120" alt="Tuxedo Cat" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="assets/previews/coco.gif" width="120" alt="Coco" />
 </p>
 <p align="center">
-  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer · Coco</sub>
+  <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer · Tuxedo Cat · Coco</sub>
 </p>
 
-Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for details.
+Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for the asset format and TinyRoommate pipeline.
 
-To add a new pet like `Coco`, the repo convention is:
+## Project Docs
 
-```bash
-python3 -m pip install --user pillow numpy
-python3 scripts/process-spritesheet-v4.py path/to/coco-source.png \
-  -o public/sprites/coco.png \
-  --cols 8 --rows 9 --target 128
-python3 scripts/generate-preview-gif.py public/sprites/coco.png \
-  -o assets/previews/coco.gif \
-  --still-output assets/previews/coco.png
-```
+If you're contributing or reviewing changes, start with **[docs/README.md](docs/README.md)**.
 
-Then register `coco` in `src/characters.js`. The Settings picker is generated from that file automatically.
+It links to the current:
+
+- product spec
+- interaction/UI spec
+- development workflow
 
 ## A Day in Its Life
 
@@ -129,8 +127,10 @@ You need [Node.js](https://nodejs.org/) (v18+), [Rust](https://rustup.rs/), and 
 gh repo fork ryannli/tinyroommate --clone
 cd tinyroommate
 npm install
-npx tauri dev
+npm run tauri:dev
 ```
+
+`npm run tauri:dev` picks an open port automatically. Set `TAURI_DEV_PORT=5180` to pin Tauri dev to a specific port, or `PORT=5180` when running the frontend without Tauri.
 
 <details>
 <summary>Prerequisites</summary>

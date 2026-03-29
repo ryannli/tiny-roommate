@@ -1,4 +1,11 @@
-# Sprite Sheet Spec
+# Sprite Spec
+
+This document is the single source of truth for custom character sprite assets in TinyRoommate.
+
+It covers both:
+
+- the sprite sheet format
+- the TinyRoommate repo pipeline for turning that sheet into a usable character
 
 ## Grid Layout
 
@@ -62,9 +69,11 @@ CHARACTER: [describe your character]
 STYLE: [e.g. "cute, photo-realistic" or "pixel art" or "chibi anime"]
 ```
 
-## Processing
+## TinyRoommate Pipeline
 
-V4 is the canonical sprite-sheet cleanup pipeline for TinyRoommate.
+Once your source sheet matches the format above, use the repo pipeline below to turn it into an in-app character.
+
+### Required
 
 Install the image tooling once:
 
@@ -72,7 +81,7 @@ Install the image tooling once:
 python3 -m pip install --user pillow numpy
 ```
 
-After generating, run:
+Process the source sheet into the app-ready sprite:
 
 ```bash
 python3 scripts/process-spritesheet-v4.py path/to/your-character-source.png \
@@ -80,23 +89,7 @@ python3 scripts/process-spritesheet-v4.py path/to/your-character-source.png \
   --cols 8 --rows 9 --target 128
 ```
 
-Then generate the preview assets used by the README:
-
-```bash
-python3 scripts/generate-preview-gif.py public/sprites/your_character.png \
-  -o assets/previews/your_character.gif \
-  --still-output assets/previews/your_character.png
-```
-
-That gives you the two files the repo convention uses:
-
-- `public/sprites/your_character.png`: the in-app spritesheet
-- `assets/previews/your_character.gif`: animated preview for docs
-- `assets/previews/your_character.png`: still preview image
-
-## Register Your Character
-
-Add an entry to `src/characters.js`:
+Register the character in `src/characters.js`:
 
 ```js
 // In CHARACTERS:
@@ -115,4 +108,22 @@ your_character: {
 },
 ```
 
-The character picker UI is generated automatically from this file. Once `public/sprites/your_character.png` exists, your character appears in Settings automatically.
+Once `public/sprites/your_character.png` exists and the entry is registered, the Settings picker will include the new character automatically.
+
+### Optional README Previews
+
+If you want the character to appear in the README preview gallery, generate preview assets from the processed sprite sheet:
+
+```bash
+python3 scripts/generate-preview-gif.py public/sprites/your_character.png \
+  -o assets/previews/your_character.gif
+```
+
+This script expects the cleaned `8x9` sheet produced by `process-spritesheet-v4.py` with `--target 128`.
+
+The preview GIF is docs-only (`assets/previews/your_character.gif`).
+
+The app itself only needs:
+
+- `public/sprites/your_character.png`
+- the matching registration in `src/characters.js`

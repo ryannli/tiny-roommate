@@ -17,9 +17,10 @@ async function resolvePetDataPaths() {
 
 // Structured config loaded from frontmatter
 let config = {
-  pet: { name: 'Mochi', born: '' },
+  pet: { name: 'Phoebe', born: '' },
   owner: { name: '' },
   sprite: 'tabby_cat',
+  pet_scale: 0,
 };
 
 function shellQuote(value) {
@@ -34,11 +35,11 @@ async function seedPetDataIfNeeded(projectRoot) {
   var dataPath = shellQuote(projectRoot + '/.pet-data');
   var templatePath = shellQuote(projectRoot + '/.pet-data-template');
   var now = new Date();
-  var today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  var timestamp = now.toISOString();
   // If .pet-data doesn't exist, copy from template and stamp born date
   await runShell(
     '[ -d ' + dataPath + ' ] || { cp -R ' + templatePath + ' ' + dataPath +
-    ' && perl -i -pe ' + shellQuote('s/^born:.*/born: ' + today + '/') + ' ' + dataPath + '/config.md; }'
+    ' && perl -i -pe ' + shellQuote('s/^born:.*/born: ' + timestamp + '/') + ' ' + dataPath + '/config.md; }'
   );
 }
 
@@ -105,6 +106,7 @@ export async function loadConfig() {
     if (fields.born) config.pet.born = fields.born;
     if (fields.owner_name) config.owner.name = fields.owner_name;
     if (fields.sprite) config.sprite = fields.sprite;
+    if (fields.pet_scale) config.pet_scale = parseFloat(fields.pet_scale) || 0;
   }
 
   return { ...config, pet: { ...config.pet }, owner: { ...config.owner } };
@@ -118,6 +120,7 @@ export function saveConfigField(key, value) {
   if (key === 'born') config.pet.born = value;
   if (key === 'owner_name') config.owner.name = value;
   if (key === 'sprite') config.sprite = value;
+  if (key === 'pet_scale') config.pet_scale = parseFloat(value) || 0;
 
   // Queue file writes so concurrent calls don't clobber each other
   configWriteQueue = configWriteQueue.then(async function() {
@@ -291,7 +294,7 @@ export async function generateDailyDigest() {
   if (!claudeAvailable || activityLog.length < 3) return null;
 
   const logText = activityLog.map(a => `${a.time}: ${a.description || a.type}`).join('\n');
-  const petName = config.pet.name || 'Mochi';
+  const petName = config.pet.name || 'Phoebe';
 
   try {
     const result = await Command.create('claude', [

@@ -1,4 +1,11 @@
-# Sprite Sheet Spec
+# Sprite Spec
+
+This document is the single source of truth for custom character sprite assets in TinyRoommate.
+
+It covers both:
+
+- the sprite sheet format
+- the TinyRoommate repo pipeline for turning that sheet into a usable character
 
 ## Grid Layout
 
@@ -62,6 +69,61 @@ CHARACTER: [describe your character]
 STYLE: [e.g. "cute, photo-realistic" or "pixel art" or "chibi anime"]
 ```
 
-## Repo Pipeline
+## TinyRoommate Pipeline
 
-Once your source sheet matches this spec, follow **[Sprite Pipeline](SPRITE-PIPELINE.md)** for TinyRoommate's cleanup, registration, and optional preview-generation steps.
+Once your source sheet matches the format above, use the repo pipeline below to turn it into an in-app character.
+
+### Required
+
+Install the image tooling once:
+
+```bash
+python3 -m pip install --user pillow numpy
+```
+
+Process the source sheet into the app-ready sprite:
+
+```bash
+python3 scripts/process-spritesheet-v4.py path/to/your-character-source.png \
+  -o public/sprites/your_character.png \
+  --cols 8 --rows 9 --target 128
+```
+
+Register the character in `src/characters.js`:
+
+```js
+// In CHARACTERS:
+your_character: { defaultName: 'Name', displayName: 'Your Character' },
+
+// In VOICE:
+your_character: {
+  greet: '👋',
+  acks: ['~♪', '😊', 'hehe', 'hey!', '💛'],
+  petHold: 'hehe~ 😊',
+  petLines: ['hehe~', 'more...', 'nice~ 😊', "don't stop~"],
+  petFallback: 'hehe~ 😊',
+  tapLines: ['hm?', '!', 'hey?', '~'],
+  tapFallback: 'hey?',
+  chatFallback: 'hmm?',
+},
+```
+
+Once `public/sprites/your_character.png` exists and the entry is registered, the Settings picker will include the new character automatically.
+
+### Optional README Previews
+
+If you want the character to appear in the README preview gallery, generate preview assets from the processed sprite sheet:
+
+```bash
+python3 scripts/generate-preview-gif.py public/sprites/your_character.png \
+  -o assets/previews/your_character.gif
+```
+
+This script expects the cleaned `8x9` sheet produced by `process-spritesheet-v4.py` with `--target 128`.
+
+The preview GIF is docs-only (`assets/previews/your_character.gif`).
+
+The app itself only needs:
+
+- `public/sprites/your_character.png`
+- the matching registration in `src/characters.js`

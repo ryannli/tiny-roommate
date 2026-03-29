@@ -79,8 +79,17 @@ Pick a companion — or **make your own**.
   <sub>Tabby Cat · Golden Retriever · Blue Buddy · Schnauzer · Tuxedo Cat · Coco</sub>
 </p>
 
-Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for details.
-For the repo-specific cleanup and registration steps, see **[Sprite Pipeline](SPRITE-PIPELINE.md)**.
+Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for the asset format and TinyRoommate pipeline.
+
+## Project Docs
+
+If you're contributing or reviewing changes, start with **[docs/README.md](docs/README.md)**.
+
+It links to the current:
+
+- product spec
+- interaction/UI spec
+- development workflow
 
 ## A Day in Its Life
 

@@ -40,10 +40,7 @@
     letter-spacing: 0.01em;
     transform: scale(0.85);
   }
-  #bubble.show {
-    opacity: 1;
-    transform: scale(1);
-  }
+  #bubble.show { opacity: 1; transform: scale(1); }
   .bubble-quote {
     font-size: 11px;
     color: rgba(100, 75, 60, 0.4);
@@ -52,18 +49,8 @@
     border-bottom: 1px solid rgba(200, 160, 120, 0.12);
     line-height: 1.4;
   }
-  #bubble-actions {
-    display: flex;
-    align-items: center;
-    margin-top: 8px;
-    gap: 6px;
-  }
-  #bubble-reactions {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    flex: 1;
-  }
+  #bubble-actions { display: flex; align-items: center; margin-top: 8px; gap: 6px; }
+  #bubble-reactions { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
   #bubble-reactions:empty { display: none; }
   #bubble-reactions button {
     padding: 4px 10px;
@@ -76,28 +63,18 @@
     transition: all 0.15s ease;
     pointer-events: auto;
   }
-  #bubble-reactions button:hover {
-    background: rgba(255, 200, 150, 0.4);
-    border-color: rgba(200, 140, 100, 0.5);
-  }
+  #bubble-reactions button:hover { background: rgba(255, 200, 150, 0.4); border-color: rgba(200, 140, 100, 0.5); }
   #bubble-reply {
     margin-left: auto;
     padding: 2px 6px;
-    border: none;
-    border-radius: 8px;
+    border: none; border-radius: 8px;
     background: transparent;
     color: rgba(100, 75, 60, 0.3);
     font: 13px/1 'SF Pro Rounded', system-ui, sans-serif;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    pointer-events: auto;
-    flex-shrink: 0;
+    cursor: pointer; transition: all 0.15s ease;
+    pointer-events: auto; flex-shrink: 0;
   }
-  #bubble-reply:hover {
-    color: rgba(100, 75, 60, 0.7);
-    background: rgba(200, 140, 100, 0.1);
-  }
-
+  #bubble-reply:hover { color: rgba(100, 75, 60, 0.7); background: rgba(200, 140, 100, 0.1); }
   #bubble .arrow {
     position: absolute;
     width: 10px; height: 10px;
@@ -109,7 +86,6 @@
   #pet {
     display: block;
     cursor: url('/cursor-hand.svg') 28 28, pointer;
-    margin-bottom: 10px;
   }
 
   #pet-hand {
@@ -132,257 +108,23 @@
 
   #pet-status {
     position: fixed;
-    right: 8px;
-    top: 4px;
+    right: 8px; top: 4px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 3px;
     z-index: 50;
   }
-
   #together {
     font: 11px/1 'SF Pro Rounded', system-ui, sans-serif;
     color: rgba(150, 110, 80, 0.6);
     letter-spacing: 0.02em;
     white-space: nowrap;
   }
-
-  #hearts {
-    display: flex;
-    gap: 1px;
-  }
-  .heart-wrap {
-    position: relative;
-    width: 18px; height: 18px;
-    font-size: 16px;
-    line-height: 18px;
-    display: inline-block;
-  }
-  .heart-bg {
-    position: absolute;
-    top: 0; left: 0;
-    filter: grayscale(1);
-    opacity: 0.25;
-  }
-  .heart-fill {
-    position: absolute;
-    top: 0; left: 0;
-    overflow: hidden;
-  }
-
-  #chat-input {
-    position: fixed;
-    bottom: 10px; left: 50%;
-    transform: translateX(-50%);
-    width: min(200px, calc(100vw - 20px));
-    padding: 8px 12px;
-    border: 1.5px solid rgba(220, 150, 110, 0.3);
-    border-radius: 14px;
-    font: 13px 'SF Pro Rounded', system-ui, -apple-system, sans-serif;
-    outline: none;
-    background: rgba(255, 252, 248, 0.97);
-    box-shadow: 0 3px 12px rgba(180, 100, 60, 0.12);
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-  }
-  #chat-input.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  #chat-input:focus { border-color: rgba(220, 140, 90, 0.5); }
-
-  #context-menu {
-    position: fixed;
-    display: none;
-    background: rgba(255, 252, 248, 0.97);
-    border: 1px solid rgba(200, 160, 120, 0.2);
-    border-radius: 12px;
-    padding: 6px 0;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.12);
-    z-index: 1000;
-    min-width: 160px;
-    backdrop-filter: blur(10px);
-  }
-  #context-menu.show { display: block; }
-  #context-menu .menu-label {
-    font: 10px/1 'SF Pro Rounded', system-ui, sans-serif;
-    color: rgba(150, 110, 80, 0.5);
-    padding: 6px 14px 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  #context-menu .menu-divider {
-    height: 1px;
-    background: rgba(200, 160, 120, 0.15);
-    margin: 4px 0;
-  }
-  #context-menu button {
-    display: block;
-    width: 100%;
-    padding: 7px 14px;
-    border: none;
-    background: none;
-    font: 13px/1 'SF Pro Rounded', system-ui, sans-serif;
-    color: #4a3830;
-    text-align: left;
-    cursor: pointer;
-  }
-  #context-menu button:hover {
-    background: rgba(220, 170, 130, 0.15);
-  }
-  #context-menu button.menu-primary {
-    font-weight: 600;
-  }
-  #context-menu button .menu-shortcut {
-    float: right;
-    color: rgba(150, 110, 80, 0.4);
-    font-size: 11px;
-    margin-left: 16px;
-  }
-
-  /* Settings Panel */
-  #settings-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 2000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-  #settings-overlay.show { display: flex; }
-  #settings-panel {
-    background: rgba(255, 252, 248, 0.98);
-    border: 1px solid rgba(200, 160, 120, 0.2);
-    border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-    width: min(560px, calc(100vw - 24px));
-    max-height: 92vh;
-    overflow-y: auto;
-    padding: 0;
-  }
-  #settings-panel .settings-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px 12px;
-    border-bottom: 1px solid rgba(200, 160, 120, 0.12);
-  }
-  #settings-panel .settings-header h2 {
-    font: 600 15px/1 'SF Pro Rounded', system-ui, sans-serif;
-    color: #3d2b22;
-    margin: 0;
-  }
-  #settings-panel .settings-close {
-    width: 24px; height: 24px;
-    border: none; background: none;
-    font-size: 16px; color: #9a7a6a;
-    cursor: pointer;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #settings-panel .settings-close:hover {
-    background: rgba(200, 160, 120, 0.15);
-  }
-  #settings-panel .settings-section {
-    padding: 14px 20px;
-    border-bottom: 1px solid rgba(200, 160, 120, 0.08);
-  }
-  #settings-panel .settings-section:last-child { border-bottom: none; }
-  #settings-panel .settings-section label {
-    display: block;
-    font: 500 11px/1 'SF Pro Rounded', system-ui, sans-serif;
-    color: rgba(150, 110, 80, 0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-  }
-  #settings-panel .settings-section input[type="text"] {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1.5px solid rgba(200, 160, 120, 0.25);
-    border-radius: 10px;
-    font: 13px 'SF Pro Rounded', system-ui, sans-serif;
-    color: #3d2b22;
-    background: rgba(255, 255, 255, 0.7);
-    outline: none;
-    transition: border-color 0.15s ease;
-  }
-  #settings-panel .settings-section input[type="text"]:focus {
-    border-color: rgba(220, 140, 90, 0.5);
-  }
-  #settings-panel .settings-section input[type="text"]::placeholder {
-    color: rgba(150, 110, 80, 0.35);
-  }
-  .sprite-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-  }
-  .sprite-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 12px;
-    border: 2px solid transparent;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    background: none;
-    text-align: center;
-    font: 13px/1 'SF Pro Rounded', system-ui, sans-serif;
-    color: #4a3830;
-    min-height: 156px;
-  }
-  .sprite-option:hover {
-    background: rgba(220, 170, 130, 0.1);
-  }
-  .sprite-option.active {
-    border-color: rgba(220, 150, 110, 0.4);
-    background: rgba(255, 230, 200, 0.2);
-    font-weight: 600;
-  }
-  .sprite-option canvas {
-    width: 104px;
-    height: 104px;
-    image-rendering: auto;
-  }
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .slider-row input[type="range"] {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 4px;
-    border-radius: 2px;
-    background: rgba(200, 160, 120, 0.25);
-    outline: none;
-  }
-  .slider-row input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: rgba(220, 150, 110, 0.8);
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-  }
-  .slider-value {
-    font: 500 12px/1 'SF Pro Rounded', system-ui, sans-serif;
-    color: rgba(150, 110, 80, 0.6);
-    min-width: 36px;
-    text-align: right;
-  }
+  #hearts { display: flex; gap: 1px; }
+  .heart-wrap { position: relative; width: 18px; height: 18px; font-size: 16px; line-height: 18px; display: inline-block; }
+  .heart-bg { position: absolute; top: 0; left: 0; filter: grayscale(1); opacity: 0.25; }
+  .heart-fill { position: absolute; top: 0; left: 0; overflow: hidden; }
 </style>
 </head>
 <body>
@@ -400,41 +142,6 @@
 </div>
 <canvas id="pet"></canvas>
 <img id="pet-hand" src="/cursor-hand.svg" />
-<input id="chat-input" type="text" placeholder="Say something to Phoebe..." />
-<div id="context-menu">
-  <button id="menu-settings" class="menu-primary">🐾 Settings...</button>
-  <div class="menu-divider"></div>
-  <button id="menu-inspect">Inspect Element <span class="menu-shortcut">⌥⌘I</span></button>
-  <div class="menu-divider"></div>
-  <button id="menu-quit">Quit</button>
-</div>
-<div id="settings-overlay">
-  <div id="settings-panel">
-    <div class="settings-header">
-      <h2>Settings</h2>
-      <button class="settings-close" id="settings-close">&times;</button>
-    </div>
-    <div class="settings-section">
-      <label>Pet Name</label>
-      <input type="text" id="setting-pet-name" placeholder="Phoebe" />
-    </div>
-    <div class="settings-section">
-      <label>Call me</label>
-      <input type="text" id="setting-owner-name" placeholder="How should your pet call you?" />
-    </div>
-    <div class="settings-section">
-      <label>Pet Size</label>
-      <div class="slider-row">
-        <input type="range" id="setting-pet-scale" min="0.8" max="2.5" step="0.1" value="1.5" />
-        <span class="slider-value" id="pet-scale-value">1.5x</span>
-      </div>
-    </div>
-    <div class="settings-section">
-      <label>Character</label>
-      <div class="sprite-options" id="sprite-options"></div>
-    </div>
-  </div>
-</div>
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>

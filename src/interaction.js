@@ -3,6 +3,7 @@
 import { STATES } from './sprite.js';
 import { getTimeSignals, getIdleSeconds, buildContextString } from './signals.js';
 import { think } from './brain.js';
+import { openChatWindow } from './settings.js';
 
 var PET_HOLD_MS = 500;
 var SWING_DAMPING = 0.92;
@@ -18,7 +19,6 @@ export function initInteraction(pet) {
   var petTimer = null;
   var clickCount = 0;
   var clickTimer = null;
-  var chatInput = document.getElementById('chat-input');
   var petHand = document.getElementById('pet-hand');
 
   // --- Hand rotation ---
@@ -206,61 +206,12 @@ export function initInteraction(pet) {
     pet.lastInteractionTime = Date.now();
   }
 
-  // --- Double click: chat ---
+  // --- Double click: open chat window ---
   function openChat() {
-    chatInput.classList.add('show');
-    chatInput.focus();
     pet.sprite.setState('talk');
     pet.showBubble('?');
+    openChatWindow(pet).catch(function() {});
   }
 
   pet.openChat = openChat;
-
-  chatInput.addEventListener('keydown', async function(e) {
-    if (e.key === 'Enter') {
-      var text = chatInput.value.trim();
-      chatInput.value = '';
-      chatInput.classList.remove('show');
-      if (!text) { pet.sprite.setState('idle'); return; }
-      pet.gainHeart();
-
-      pet.llmBusy = true;
-      pet.sprite.setState('talk');
-      var thinkingLines = ['🤔 hmm...', '🤔 let me think...', '🤔 umm...', '💭 hmm...', '💭 ...'];
-      pet.showBubble(thinkingLines[Math.floor(Math.random() * thinkingLines.length)], 30000);
-
-      var timeSignals = getTimeSignals();
-      var context = buildContextString(timeSignals, getIdleSeconds(), pet.lastScreenContext);
-      var result = await think('Your owner said to you: "' + text + '"\n\nEnvironment:\n' + context + '\n\nRespond naturally.');
-
-      if (result) {
-        // Chat replies stay longer — user is actively reading
-        var replyDuration = Math.max(10000, result.text.length * 300);
-        pet.showBubble(result.text, replyDuration, true, result.reactions, { quote: text });
-        if (result.state && STATES[result.state]) {
-          pet.sprite.setState(result.state, STATES[result.state].loop ? null : function() { pet.sprite.setState('idle'); });
-        } else {
-          pet.sprite.setState('idle');
-        }
-      } else {
-        pet.showBubble(pet.voice().chatFallback, 2000, true);
-        pet.sprite.setState('idle');
-      }
-      pet.llmBusy = false;
-      pet.lastInteractionTime = Date.now();
-    }
-
-    if (e.key === 'Escape') {
-      chatInput.value = '';
-      chatInput.classList.remove('show');
-      pet.sprite.setState('idle');
-    }
-  });
-
-  chatInput.addEventListener('blur', function() {
-    setTimeout(function() {
-      chatInput.classList.remove('show');
-      if (pet.sprite) pet.sprite.setState('idle');
-    }, 200);
-  });
 }

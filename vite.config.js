@@ -19,6 +19,9 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         bubble: resolve(__dirname, 'bubble.html'),
+        settings: resolve(__dirname, 'settings.html'),
+        chat: resolve(__dirname, 'chat.html'),
+        'context-menu': resolve(__dirname, 'context-menu.html'),
       },
     },
   },

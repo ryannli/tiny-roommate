@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    background: transparent;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: 'SF Pro Rounded', system-ui, -apple-system, sans-serif;
+  }
+  #menu {
+    background: rgba(255, 252, 248, 0.97);
+    border: 1px solid rgba(200, 160, 120, 0.2);
+    border-radius: 12px;
+    padding: 6px 0;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+    backdrop-filter: blur(10px);
+  }
+  .menu-divider {
+    height: 1px;
+    background: rgba(200, 160, 120, 0.15);
+    margin: 4px 0;
+  }
+  button {
+    display: block;
+    width: 100%;
+    padding: 7px 14px;
+    border: none;
+    background: none;
+    font: 13px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: #4a3830;
+    text-align: left;
+    cursor: pointer;
+  }
+  button:hover { background: rgba(220, 170, 130, 0.15); }
+  button.primary { font-weight: 600; }
+  .shortcut {
+    float: right;
+    color: rgba(150, 110, 80, 0.4);
+    font-size: 11px;
+    margin-left: 16px;
+  }
+</style>
+</head>
+<body>
+  <div id="menu">
+    <button class="primary" id="menu-settings">🐾 Settings...</button>
+    <div class="menu-divider"></div>
+    <button id="menu-inspect">Inspect Element <span class="shortcut">⌥⌘I</span></button>
+    <div class="menu-divider"></div>
+    <button id="menu-quit">Quit</button>
+  </div>
+  <script type="module" src="/src/context-menu.js"></script>
+</body>
+</html>

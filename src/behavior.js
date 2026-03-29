@@ -3,7 +3,7 @@
 import { Command } from '@tauri-apps/plugin-shell';
 import { STATES } from './sprite.js';
 import { getTimeSignals, getIdleSeconds, captureScreenContext, buildContextString, isScreenRecordingDenied } from './signals.js';
-import { think, getActivityLog, generateDailyDigest, loadConfig, ensurePetDataPath, checkClaudeCli, isClaudeAvailable } from './brain.js';
+import { think, getActivityLog, generateDailyDigest, loadConfig, ensurePetDataPath, checkAiCli, getAiProviderInfo, summarizePerceptionsForTimeline } from './brain.js';
 
 var WALK_SPEED = 50;
 var SCREEN_MARGIN = 30;
@@ -83,13 +83,7 @@ export function initBehavior(pet) {
       var perceptions = (raw.stdout || '').trim();
       if (!perceptions) return;
 
-      // Ask LLM to summarize into time blocks
-      var result = await Command.create('claude', [
-        '--print', '--output-format', 'text', '--model', 'haiku',
-        '-p', 'Summarize these screen observations into a timeline for ' + yesterday + '. Merge activities into coarse blocks of at least 15-20 minutes each — do NOT create short blocks for every minor change. Round times to the nearest 5 minutes. Format:\n\n## ' + yesterday + '\n- HH:MM–HH:MM — Activity description\n- HH:MM–HH:MM — Activity description\n\nBe concise. Output ONLY the formatted timeline, nothing else.\n\nObservations:\n' + perceptions,
-      ]).execute();
-
-      var summary = (result.stdout || '').trim();
+      var summary = await summarizePerceptionsForTimeline(yesterday, perceptions);
       if (summary) {
         await appendToFile('owner-timeline.md', '\n' + summary);
         console.log('📅 Timeline updated for', yesterday);
@@ -276,23 +270,31 @@ export function initBehavior(pet) {
     var cfg = await loadConfig();
     pet.petName = cfg.pet.name;
     pet.ownerName = cfg.owner.name;
+    pet.aiProvider = cfg.aiProvider;
     if (cfg.sprite && cfg.sprite !== pet.currentSprite) {
       pet.currentSprite = cfg.sprite;
       pet.sprite.image.src = '/sprites/' + pet.currentSprite + '.png';
     }
 
-    // Check if Claude CLI is available
-    var hasClaude = await checkClaudeCli();
+    if (typeof pet.ensureAiProviderSelected === 'function') {
+      pet.aiProvider = await pet.ensureAiProviderSelected(cfg.aiProvider);
+    }
+
+    var providerInfo = getAiProviderInfo(pet.aiProvider) || {
+      displayName: 'the selected AI CLI',
+      installHint: 'your preferred AI CLI',
+    };
+    var hasAiCli = await checkAiCli(pet.aiProvider);
 
     pet.sprite.setState('happy');
     pet.showBubble('hey! i\'m ' + pet.petName + ' ' + pet.voice().greet, 3000);
     await sleep(3500);
 
-    if (!hasClaude) {
+    if (!hasAiCli) {
       pet.sprite.setState('sad');
-      pet.showBubble('i can\'t find Claude Code on this machine... i\'ll hang out but i can\'t think or see your screen without it 🥺', 8000);
+      pet.showBubble('i can\'t find ' + providerInfo.displayName + ' on this machine... i\'ll hang out but i can\'t think or see your screen without it 🥺', 8000);
       await sleep(8500);
-      pet.showBubble('install Claude Code (claude.ai/claude-code) and restart me to unlock my full brain!', 6000);
+      pet.showBubble('install ' + providerInfo.installHint + ' and restart me to unlock my full brain!', 6000);
       await sleep(6500);
       returnToBase();
       // Offline mode: only fidget animations, no LLM/perception

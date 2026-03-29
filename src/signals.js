@@ -1,7 +1,7 @@
 // Passive signal collection — what the pet can "see"
 
 import { Command } from '@tauri-apps/plugin-shell';
-import { ensurePetDataPath } from './brain.js';
+import { describeScreenImage, ensurePetDataPath } from './brain.js';
 
 export function getTimeSignals() {
   const now = new Date();
@@ -46,13 +46,13 @@ export function getIdleSeconds() {
 // Screenshot — capture the screen with the mouse cursor (active display)
 // macOS screencapture: -x = no sound, -C = capture cursor (tells us which display)
 // -D flag not available, but screencapture without -m captures the main display
-// We capture all displays and let Claude figure out what's on screen
-const SCREENSHOT_PATH = '/tmp/tinyroommate-screenshot.png';
 var screenRecordingDenied = false;
 
 export async function captureScreenContext() {
+  var screenshotPath = '';
   try {
     var petDataPath = await ensurePetDataPath();
+    screenshotPath = petDataPath + '/tinyroommate-screenshot.png';
     // Step 1: Detect which display the mouse is on
     var displayNum = '1';
     try {
@@ -67,7 +67,7 @@ export async function captureScreenContext() {
     }
 
     // Step 2: Capture that display
-    var captureResult = await Command.create('screencapture', ['-x', '-D', displayNum, SCREENSHOT_PATH]).execute();
+    var captureResult = await Command.create('screencapture', ['-x', '-D', displayNum, screenshotPath]).execute();
     console.log('📸 screencapture exit:', captureResult.code);
 
     if (captureResult.code !== 0) {
@@ -76,26 +76,20 @@ export async function captureScreenContext() {
     }
     screenRecordingDenied = false;
 
-    // Step 3: Ask Claude to describe it
-    var result = await Command.create('claude', [
-      '--print',
-      '--tools', 'Read',
-      '--output-format', 'text',
-      '--dangerously-skip-permissions',
-      '--model', 'haiku',
-      '-p', 'Use the Read tool to look at ' + SCREENSHOT_PATH + '. Describe in 1-2 SHORT sentences what the user is doing. Focus on: what app, what content. Output ONLY the description.',
-    ], { cwd: petDataPath }).execute();
+    // Step 3: Ask the selected AI CLI to describe it
+    var description = await describeScreenImage(screenshotPath);
 
     // Step 4: Clean up
-    Command.create('rm', [SCREENSHOT_PATH]).execute().catch(function() {});
+    Command.create('rm', [screenshotPath]).execute().catch(function() {});
 
-    const description = (result.stdout || '').trim();
     console.log('📸 Screen context:', description);
     return description || null;
   } catch (err) {
     console.error('📸 Screenshot error:', err);
     // Clean up on error
-    Command.create('rm', [SCREENSHOT_PATH]).execute().catch(() => {});
+    if (screenshotPath) {
+      Command.create('rm', [screenshotPath]).execute().catch(function() {});
+    }
     return null;
   }
 }

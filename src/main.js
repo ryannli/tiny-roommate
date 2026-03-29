@@ -10,9 +10,8 @@ import { initHearts } from './hearts.js';
 import { initBubble } from './bubble-manager.js';
 import { initBehavior } from './behavior.js';
 import { initInteraction } from './interaction.js';
-import { getDefaultScale, openSettingsWindow, showContextMenu, openChatWindow } from './settings.js';
+import { getDefaultScale, initProviderChooser, openSettingsWindow, showContextMenu, openChatWindow } from './settings.js';
 
-// Shared state object — passed to all modules
 var pet = {
   canvas: document.getElementById('pet'),
   appWindow: getCurrentWindow(),
@@ -20,6 +19,7 @@ var pet = {
   currentSprite: 'tabby_cat',
   petName: 'Phoebe',
   ownerName: '',
+  aiProvider: '',
   isWalking: false,
   llmBusy: false,
   dragStarted: false,
@@ -31,6 +31,7 @@ var pet = {
   gainHeart: null,
   isSick: false,
   walkRandomDirection: null,
+  ensureAiProviderSelected: null,
   voice: function() { return voice(pet); },
   resizeWindowToFit: null,
 };
@@ -42,7 +43,6 @@ pet.sprite = new SpriteAnimator(
 );
 trackActivity();
 
-// Resize window to exactly fit the pet sprite (no padding)
 function resizeWindowToFit() {
   var size = pet.sprite.getSize();
   var dpr = window.devicePixelRatio || 1;
@@ -52,7 +52,6 @@ function resizeWindowToFit() {
 }
 pet.resizeWindowToFit = resizeWindowToFit;
 
-// Init modules
 var hearts = initHearts(pet);
 pet.gainHeart = hearts.gainHeart;
 Object.defineProperty(pet, 'isSick', { get: function() { return hearts.isSick; } });
@@ -65,7 +64,9 @@ pet.walkRandomDirection = behavior.walkRandomDirection;
 
 initInteraction(pet);
 
-// --- Right-click: context menu window ---
+var providerChooser = initProviderChooser(pet);
+pet.ensureAiProviderSelected = providerChooser.ensureAiProviderSelected;
+
 document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
   var dpr = window.devicePixelRatio || 1;
@@ -74,7 +75,6 @@ document.addEventListener('contextmenu', function(e) {
   });
 });
 
-// --- Events from sub-windows ---
 listen('contextmenu:action', function(event) {
   var action = event.payload && event.payload.action;
   if (action === 'settings') openSettingsWindow().catch(function() {});
@@ -89,6 +89,10 @@ listen('settings:saved', function(event) {
     pet.showBubble('call me ' + pet.petName + ' now!', 3000, true);
   }
   if (d.ownerName !== undefined) pet.ownerName = d.ownerName;
+  if (d.aiProvider) {
+    pet.aiProvider = d.aiProvider;
+    providerChooser.syncAiProvider(d.aiProvider);
+  }
   if (d.sprite && d.sprite !== pet.currentSprite) {
     pet.currentSprite = d.sprite;
     pet.sprite.image.src = '/sprites/' + d.sprite + '.png';
@@ -102,11 +106,13 @@ listen('settings:saved', function(event) {
 
 listen('chat:submit', function(event) {
   var text = event.payload && event.payload.text;
-  if (!text) { pet.sprite.setState('idle'); return; }
+  if (!text) {
+    pet.sprite.setState('idle');
+    return;
+  }
   handleChatMessage(text);
 });
 
-// Chat message handling
 async function handleChatMessage(text) {
   pet.gainHeart();
   pet.llmBusy = true;
@@ -134,24 +140,23 @@ async function handleChatMessage(text) {
   pet.lastInteractionTime = Date.now();
 }
 
-// Keyboard shortcut for devtools
 document.addEventListener('keydown', function(e) {
   if (e.metaKey && e.altKey && e.key === 'i') {
     invoke('toggle_devtools').catch(function() {});
   }
 });
 
-// Animation loop
 function animationLoop(timestamp) {
   pet.sprite.update(timestamp);
   requestAnimationFrame(animationLoop);
 }
 requestAnimationFrame(animationLoop);
 
-// Load config and start
 loadConfig().then(function(cfg) {
   pet.petName = cfg.pet.name;
   pet.ownerName = cfg.owner.name;
+  pet.aiProvider = cfg.aiProvider;
+  providerChooser.syncAiProvider(cfg.aiProvider);
   if (cfg.sprite && cfg.sprite !== pet.currentSprite) {
     pet.currentSprite = cfg.sprite;
     pet.sprite.image.src = '/sprites/' + pet.currentSprite + '.png';
@@ -161,6 +166,5 @@ loadConfig().then(function(cfg) {
   pet.sprite.setScale(scale);
   resizeWindowToFit();
   hearts.updateTogether();
+  behavior.start();
 });
-
-behavior.start();

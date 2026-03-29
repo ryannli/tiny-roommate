@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/platform-macOS-black?style=flat-square" alt="macOS" />
   <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License" />
   <img src="https://img.shields.io/badge/tauri-v2-24C8D8?style=flat-square" alt="Tauri v2" />
-  <img src="https://img.shields.io/badge/powered%20by-Claude-D97757?style=flat-square" alt="Powered by Claude" />
+  <img src="https://img.shields.io/badge/powered%20by-Claude%20Code%20%2B%20Gemini%20CLI-D97757?style=flat-square" alt="Powered by Claude Code and Gemini CLI" />
 </p>
 
 <!-- TODO: add demo screenshot or GIF here -->
@@ -32,7 +32,7 @@ Every few minutes, a speech bubble pops up — sometimes random (*"~♪"*), some
 <td width="50%" valign="top">
 
 **It sees what you see**<br/>
-Screen capture + Claude Vision — knows if you're coding, designing, or doom-scrolling.
+Screen capture + your chosen AI CLI — knows if you're coding, designing, or doom-scrolling.
 
 **It remembers you**<br/>
 A living memory that grows over time. Not a stateless chatbot.
@@ -121,7 +121,7 @@ Your pet reacts to what's happening — not randomly, but contextually.
 
 > **Note:** TinyRoommate currently runs on **macOS only**. Windows and Linux support is on the roadmap.
 
-You need [Node.js](https://nodejs.org/) (v18+), [Rust](https://rustup.rs/), and [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (for the AI brain).
+You need [Node.js](https://nodejs.org/) (v18+), [Rust](https://rustup.rs/), and either [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli) for the AI brain.
 
 ```bash
 gh repo fork ryannli/tinyroommate --clone
@@ -137,7 +137,7 @@ npm run tauri:dev
 
 - [Node.js](https://nodejs.org/) v18+
 - [Rust](https://rustup.rs/)
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — for the AI brain (optional — pet still runs without it, just can't think or talk)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli) — for the AI brain (optional — pet still runs without it, just can't think or talk)
 
 </details>
 
@@ -178,7 +178,7 @@ First launch compiles Rust (~2-3 min). After that it's instant.
 
 ## Make It Yours
 
-Right-click → **Settings** to change names and character.
+On first launch, pick **Claude Code** or **Gemini CLI**. Right-click → **Settings** any time to change names, character, or AI provider.
 
 For deeper customization, edit `.pet-data/config.md`:
 
@@ -187,6 +187,7 @@ For deeper customization, edit `.pet-data/config.md`:
 pet_name: Cooper
 owner_name: Alex
 sprite: golden_retriever
+ai_provider: gemini
 ---
 
 # Personality
@@ -214,6 +215,6 @@ All data lives in `.pet-data/` — plain Markdown you can read:
 ---
 
 <p align="center">
-  <sub>Built with <a href="https://v2.tauri.app/">Tauri</a> · Vanilla JS · <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a></sub><br/>
+  <sub>Built with <a href="https://v2.tauri.app/">Tauri</a> · Vanilla JS · <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a> / <a href="https://github.com/google-gemini/gemini-cli">Gemini CLI</a></sub><br/>
   <sub>MIT License</sub>
 </p>

@@ -2,11 +2,12 @@
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { emitTo } from '@tauri-apps/api/event';
 import { SpriteAnimator, getSpriteRenderOptions } from './sprite.js';
-import { loadConfig, saveConfigField } from './brain.js';
+import { getSupportedAiProviders, loadConfig, saveConfigField } from './brain.js';
 import { CHARACTERS } from './characters.js';
 
 var appWindow = getCurrentWindow();
 var currentSprite = 'tabby_cat';
+var currentAiProvider = '';
 var previewAnimId = null;
 var previewAnimators = [];
 
@@ -47,6 +48,35 @@ function updateActiveSprite() {
   });
 }
 
+var providerContainer = document.getElementById('settings-ai-provider-options');
+getSupportedAiProviders().forEach(function(provider) {
+  var btn = document.createElement('button');
+  btn.className = 'provider-option';
+  btn.dataset.provider = provider.id;
+
+  var title = document.createElement('strong');
+  title.textContent = provider.displayName;
+
+  var description = document.createElement('span');
+  description.textContent = provider.id === 'claude'
+    ? 'Uses Claude Code as the pet brain.'
+    : 'Uses Gemini CLI as the pet brain.';
+
+  btn.appendChild(title);
+  btn.appendChild(description);
+  btn.addEventListener('click', function() {
+    currentAiProvider = provider.id;
+    updateActiveProvider();
+  });
+  providerContainer.appendChild(btn);
+});
+
+function updateActiveProvider() {
+  document.querySelectorAll('.provider-option').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.provider === currentAiProvider);
+  });
+}
+
 // Slider
 var scaleSlider = document.getElementById('setting-pet-scale');
 var scaleValueEl = document.getElementById('pet-scale-value');
@@ -59,10 +89,12 @@ loadConfig().then(function(cfg) {
   document.getElementById('setting-pet-name').value = cfg.pet.name;
   document.getElementById('setting-owner-name').value = cfg.owner.name;
   currentSprite = cfg.sprite || 'tabby_cat';
+  currentAiProvider = cfg.aiProvider || 'claude';
   var scale = cfg.pet_scale > 0 ? cfg.pet_scale : 1.5;
   scaleSlider.value = scale;
   scaleValueEl.textContent = scale.toFixed(1) + 'x';
   updateActiveSprite();
+  updateActiveProvider();
   startPreviewAnimations();
 });
 
@@ -75,12 +107,14 @@ function saveAndClose() {
   saveConfigField('owner_name', newOwnerName);
   saveConfigField('sprite', currentSprite);
   saveConfigField('pet_scale', String(newScale));
+  saveConfigField('ai_provider', currentAiProvider);
 
   emitTo('main', 'settings:saved', {
     petName: newPetName,
     ownerName: newOwnerName,
     sprite: currentSprite,
     scale: newScale,
+    aiProvider: currentAiProvider,
   });
 
   stopPreviewAnimations();

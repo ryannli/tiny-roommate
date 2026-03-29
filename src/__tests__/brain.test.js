@@ -5,7 +5,7 @@ vi.mock('@tauri-apps/plugin-shell', () => ({
   Command: { create: () => ({ execute: () => Promise.resolve({ stdout: '', code: 0 }) }) },
 }));
 
-const { parseResponse } = await import('../brain.js');
+const { parseResponse, normalizeAiProvider, getSupportedAiProviders } = await import('../brain.js');
 
 describe('parseResponse', () => {
   it('extracts text, state, reactions from clean JSON', () => {
@@ -67,5 +67,20 @@ describe('parseResponse', () => {
   it('truncates long text to first sentence', () => {
     var result = parseResponse('{"text":"This is a really long sentence that goes on and on and on and on and keeps going forever and ever more. And another.","state":"idle"}');
     expect(result.text.length).toBeLessThanOrEqual(120);
+  });
+});
+
+describe('AI provider helpers', () => {
+  it('normalizes supported providers and rejects unknown values', () => {
+    expect(normalizeAiProvider('Claude')).toBe('claude');
+    expect(normalizeAiProvider(' gemini ')).toBe('gemini');
+    expect(normalizeAiProvider('openai')).toBe('');
+    expect(normalizeAiProvider('')).toBe('');
+  });
+
+  it('exposes both supported AI providers', () => {
+    var providers = getSupportedAiProviders().map(function(provider) { return provider.id; });
+    expect(providers).toContain('claude');
+    expect(providers).toContain('gemini');
   });
 });

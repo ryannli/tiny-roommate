@@ -29,6 +29,12 @@
           "sidecar": false
         },
         {
+          "name": "gemini",
+          "cmd": "gemini",
+          "args": true,
+          "sidecar": false
+        },
+        {
           "name": "bash",
           "cmd": "bash",
           "args": true,
@@ -60,6 +66,12 @@
         {
           "name": "claude",
           "cmd": "claude",
+          "args": true,
+          "sidecar": false
+        },
+        {
+          "name": "gemini",
+          "cmd": "gemini",
           "args": true,
           "sidecar": false
         },

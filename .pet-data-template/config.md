@@ -2,6 +2,8 @@
 pet_name: Phoebe
 owner_name:
 sprite: tabby_cat
+pet_scale: 1.5
+ai_provider:
 born:
 ---
 

@@ -20,6 +20,7 @@ let config = {
   pet: { name: 'Phoebe', born: '' },
   owner: { name: '' },
   sprite: 'tabby_cat',
+  pet_scale: 0,
 };
 
 function shellQuote(value) {
@@ -105,6 +106,7 @@ export async function loadConfig() {
     if (fields.born) config.pet.born = fields.born;
     if (fields.owner_name) config.owner.name = fields.owner_name;
     if (fields.sprite) config.sprite = fields.sprite;
+    if (fields.pet_scale) config.pet_scale = parseFloat(fields.pet_scale) || 0;
   }
 
   return { ...config, pet: { ...config.pet }, owner: { ...config.owner } };
@@ -118,6 +120,7 @@ export function saveConfigField(key, value) {
   if (key === 'born') config.pet.born = value;
   if (key === 'owner_name') config.owner.name = value;
   if (key === 'sprite') config.sprite = value;
+  if (key === 'pet_scale') config.pet_scale = parseFloat(value) || 0;
 
   // Queue file writes so concurrent calls don't clobber each other
   configWriteQueue = configWriteQueue.then(async function() {

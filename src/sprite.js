@@ -109,6 +109,12 @@ export class SpriteAnimator {
     );
   }
 
+  setScale(newScale) {
+    this.scale = newScale;
+    this.canvas.width = FRAME_W * this.scale;
+    this.canvas.height = FRAME_H * this.scale;
+  }
+
   getSize() {
     return { width: FRAME_W * this.scale, height: FRAME_H * this.scale };
   }

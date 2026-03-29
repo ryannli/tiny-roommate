@@ -14,8 +14,8 @@
     "windows": [
       {
         "title": "",
-        "width": 350,
-        "height": 400,
+        "width": 240,
+        "height": 260,
         "resizable": false,
         "fullscreen": false,
         "decorations": false,

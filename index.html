@@ -132,8 +132,8 @@
 
   #pet-status {
     position: fixed;
-    right: 15px;
-    bottom: 170px;
+    right: 8px;
+    top: 4px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -175,7 +175,7 @@
     position: fixed;
     bottom: 10px; left: 50%;
     transform: translateX(-50%);
-    width: 200px;
+    width: min(200px, calc(100vw - 20px));
     padding: 8px 12px;
     border: 1.5px solid rgba(220, 150, 110, 0.3);
     border-radius: 14px;
@@ -354,6 +354,35 @@
     height: 104px;
     image-rendering: auto;
   }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slider-row input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(200, 160, 120, 0.25);
+    outline: none;
+  }
+  .slider-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(220, 150, 110, 0.8);
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+  .slider-value {
+    font: 500 12px/1 'SF Pro Rounded', system-ui, sans-serif;
+    color: rgba(150, 110, 80, 0.6);
+    min-width: 36px;
+    text-align: right;
+  }
 </style>
 </head>
 <body>
@@ -392,6 +421,13 @@
     <div class="settings-section">
       <label>Call me</label>
       <input type="text" id="setting-owner-name" placeholder="How should your pet call you?" />
+    </div>
+    <div class="settings-section">
+      <label>Pet Size</label>
+      <div class="slider-row">
+        <input type="range" id="setting-pet-scale" min="0.8" max="2.5" step="0.1" value="1.5" />
+        <span class="slider-value" id="pet-scale-value">1.5x</span>
+      </div>
     </div>
     <div class="settings-section">
       <label>Character</label>

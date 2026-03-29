@@ -5,7 +5,14 @@ import { SpriteAnimator, getSpriteRenderOptions } from './sprite.js';
 import { saveConfigField } from './brain.js';
 import { CHARACTERS } from './characters.js';
 
-var SETTINGS_SIZE = { width: 560, height: 580 };
+export function getDefaultScale() {
+  var w = window.screen.availWidth;
+  if (w < 1500) return 1.2;   // laptops
+  if (w < 2000) return 1.5;   // medium displays
+  return 1.8;                  // large monitors
+}
+
+var SETTINGS_SIZE = { width: 560, height: 640 };
 
 var PREVIEW_SEQUENCE = [
   { state: 'idle', duration: 1100 },
@@ -83,9 +90,20 @@ export function initSettings(pet) {
   });
 
   // --- Settings panel ---
+  var scaleSlider = document.getElementById('setting-pet-scale');
+  var scaleValueEl = document.getElementById('pet-scale-value');
+
+  scaleSlider.addEventListener('input', function() {
+    scaleValueEl.textContent = parseFloat(scaleSlider.value).toFixed(1) + 'x';
+  });
+
   function openSettings() {
     document.getElementById('setting-pet-name').value = pet.petName;
     document.getElementById('setting-owner-name').value = pet.ownerName;
+
+    // Set slider to current scale
+    scaleSlider.value = pet.sprite.scale;
+    scaleValueEl.textContent = pet.sprite.scale.toFixed(1) + 'x';
 
     settingsOverlay.querySelectorAll('.sprite-option').forEach(function(btn) {
       btn.classList.toggle('active', btn.dataset.sprite === pet.currentSprite);
@@ -137,12 +155,19 @@ export function initSettings(pet) {
       saveConfigField('owner_name', pet.ownerName);
     }
 
+    // Apply new scale
+    var newScale = parseFloat(scaleSlider.value);
+    if (newScale !== pet.sprite.scale) {
+      pet.sprite.setScale(newScale);
+      saveConfigField('pet_scale', String(newScale));
+    }
+
     settingsOverlay.classList.remove('show');
     stopPreviewAnimations();
 
-    // Restore window size
-    if (normalSize && normalPos) {
-      pet.appWindow.setSize({ type: 'Physical', width: normalSize.width, height: normalSize.height }).then(function() {
+    // Resize window to fit new pet size, then restore position
+    if (normalPos) {
+      pet.resizeWindowToFit().then(function() {
         return pet.appWindow.setPosition({ type: 'Physical', x: normalPos.x, y: normalPos.y });
       }).catch(function() {});
     }

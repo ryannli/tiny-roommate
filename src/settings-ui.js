@@ -1,13 +1,15 @@
 // Settings window — runs inside settings.html
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { emitTo } from '@tauri-apps/api/event';
+import { emit, emitTo, listen } from '@tauri-apps/api/event';
 import { SpriteAnimator, getSpriteRenderOptions } from './sprite.js';
-import { getSupportedAiProviders, loadConfig, saveConfigField } from './brain.js';
+import { getSupportedAiProviders } from './brain.js';
 import { CHARACTERS } from './characters.js';
 
 var appWindow = getCurrentWindow();
+var settingsHeader = document.querySelector('.settings-header');
 var currentSprite = 'tabby_cat';
-var currentAiProvider = '';
+var currentAiProvider = 'claude';
+var isSaving = false;
 var previewAnimId = null;
 var previewAnimators = [];
 
@@ -19,7 +21,12 @@ var PREVIEW_SEQUENCE = [
   { state: 'playful', duration: 1500 },
 ];
 
-// Build sprite picker
+settingsHeader.addEventListener('mousedown', function(e) {
+  if (e.button !== 0) return;
+  if (e.target && e.target.closest && e.target.closest('#settings-close')) return;
+  appWindow.startDragging().catch(function() {});
+});
+
 var spriteContainer = document.getElementById('sprite-options');
 Object.keys(CHARACTERS).forEach(function(key) {
   if (key === '_default') return;
@@ -30,15 +37,15 @@ Object.keys(CHARACTERS).forEach(function(key) {
   var cvs = document.createElement('canvas');
   cvs.className = 'sprite-preview';
   cvs.dataset.src = '/sprites/' + key + '.png';
-  cvs.width = 128; cvs.height = 128;
+  cvs.width = 128;
+  cvs.height = 128;
   var span = document.createElement('span');
   span.textContent = char.displayName || key;
   btn.appendChild(cvs);
   btn.appendChild(span);
   spriteContainer.appendChild(btn);
   btn.addEventListener('click', function() {
-    currentSprite = key;
-    updateActiveSprite();
+    setCurrentSprite(key);
   });
 });
 
@@ -46,6 +53,18 @@ function updateActiveSprite() {
   document.querySelectorAll('.sprite-option').forEach(function(btn) {
     btn.classList.toggle('active', btn.dataset.sprite === currentSprite);
   });
+}
+
+function setCurrentSprite(sprite, options) {
+  options = options || {};
+  currentSprite = sprite || 'tabby_cat';
+  updateActiveSprite();
+
+  if (options.preview === false) return;
+
+  emitTo('main', 'settings:preview-sprite', {
+    sprite: currentSprite,
+  }).catch(function() {});
 }
 
 var providerContainer = document.getElementById('settings-ai-provider-options');
@@ -77,48 +96,50 @@ function updateActiveProvider() {
   });
 }
 
-// Slider
 var scaleSlider = document.getElementById('setting-pet-scale');
 var scaleValueEl = document.getElementById('pet-scale-value');
 scaleSlider.addEventListener('input', function() {
-  scaleValueEl.textContent = parseFloat(scaleSlider.value).toFixed(1) + 'x';
+  var scale = parseFloat(scaleSlider.value);
+  scaleValueEl.textContent = scale.toFixed(1) + 'x';
+  emitTo('main', 'settings:preview-scale', { scale: scale }).catch(function() {});
 });
 
-// Load config and populate
-loadConfig().then(function(cfg) {
-  document.getElementById('setting-pet-name').value = cfg.pet.name;
-  document.getElementById('setting-owner-name').value = cfg.owner.name;
-  currentSprite = cfg.sprite || 'tabby_cat';
+function applySettingsPayload(cfg) {
+  cfg = cfg || {};
+  document.getElementById('setting-pet-name').value = cfg.petName || 'Phoebe';
+  document.getElementById('setting-owner-name').value = cfg.ownerName || '';
+  setCurrentSprite(cfg.sprite || 'tabby_cat', { preview: false });
   currentAiProvider = cfg.aiProvider || 'claude';
-  var scale = cfg.pet_scale > 0 ? cfg.pet_scale : 1.5;
+  var scale = cfg.scale > 0 ? cfg.scale : 1.5;
   scaleSlider.value = scale;
   scaleValueEl.textContent = scale.toFixed(1) + 'x';
-  updateActiveSprite();
   updateActiveProvider();
   startPreviewAnimations();
+  isSaving = false;
+}
+
+listen('settings:open', function(event) {
+  applySettingsPayload(event.payload || {});
 });
 
 function saveAndClose() {
+  if (isSaving) return;
+  isSaving = true;
   var newPetName = document.getElementById('setting-pet-name').value.trim();
   var newOwnerName = document.getElementById('setting-owner-name').value.trim();
   var newScale = parseFloat(scaleSlider.value);
 
-  saveConfigField('pet_name', newPetName);
-  saveConfigField('owner_name', newOwnerName);
-  saveConfigField('sprite', currentSprite);
-  saveConfigField('pet_scale', String(newScale));
-  saveConfigField('ai_provider', currentAiProvider);
-
-  emitTo('main', 'settings:saved', {
+  emitTo('main', 'settings:apply', {
     petName: newPetName,
     ownerName: newOwnerName,
     sprite: currentSprite,
     scale: newScale,
     aiProvider: currentAiProvider,
-  });
+  }).catch(function() {});
 
   stopPreviewAnimations();
-  appWindow.close();
+  appWindow.hide().catch(function() {});
+  isSaving = false;
 }
 
 document.getElementById('settings-close').addEventListener('click', saveAndClose);
@@ -126,7 +147,6 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') saveAndClose();
 });
 
-// Preview animations
 function startPreviewAnimations() {
   stopPreviewAnimations();
   var previews = document.querySelectorAll('.sprite-preview');
@@ -157,6 +177,11 @@ function startPreviewAnimations() {
 }
 
 function stopPreviewAnimations() {
-  if (previewAnimId) { cancelAnimationFrame(previewAnimId); previewAnimId = null; }
+  if (previewAnimId) {
+    cancelAnimationFrame(previewAnimId);
+    previewAnimId = null;
+  }
   previewAnimators = [];
 }
+
+emit('settings:ready', { label: 'settings' }).catch(function() {});

@@ -1,5 +1,5 @@
 // Window managers: settings, context menu, chat, provider chooser
-import { emitTo } from '@tauri-apps/api/event';
+import { emitTo, listen as listenEvent } from '@tauri-apps/api/event';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { getSupportedAiProviders, saveConfigField } from './brain.js';
 
@@ -80,25 +80,78 @@ export function initProviderChooser(pet) {
 
 // --- Settings window ---
 var settingsWin = null;
+var settingsWinReady = false;
+var settingsWinReadyPromise = null;
 
-export async function openSettingsWindow() {
-  if (settingsWin) {
-    settingsWin.setFocus().catch(function() {});
-    return;
+async function ensureSettingsWindow() {
+  if (settingsWin && settingsWinReady) return settingsWin;
+  if (settingsWin && settingsWinReadyPromise) {
+    await settingsWinReadyPromise;
+    return settingsWin;
   }
+
+  var existing = await WebviewWindow.getByLabel('settings');
+  if (existing) {
+    settingsWin = existing;
+    settingsWinReady = true;
+    return settingsWin;
+  }
+
   var url = new URL('./settings.html', window.location.href).toString();
+  var resolveReady;
+  var rejectReady;
+  var timeout = null;
+  settingsWinReadyPromise = new Promise(function(resolve, reject) {
+    resolveReady = resolve;
+    rejectReady = reject;
+  });
+  var unlisten = await listenEvent('settings:ready', function(event) {
+    if (!event.payload || event.payload.label !== 'settings') return;
+    clearTimeout(timeout);
+    unlisten();
+    settingsWinReady = true;
+    resolveReady();
+  });
+  timeout = setTimeout(function() {
+    unlisten();
+    rejectReady(new Error('Settings window ready timeout'));
+  }, 5000);
+
   settingsWin = new WebviewWindow('settings', {
     url: url,
     title: 'Settings',
     width: 560,
     height: 700,
+    visible: false,
     resizable: false,
     decorations: false,
     transparent: false,
     alwaysOnTop: true,
     center: true,
   });
-  settingsWin.once('tauri://destroyed', function() { settingsWin = null; });
+  settingsWin.once('tauri://destroyed', function() {
+    settingsWin = null;
+    settingsWinReady = false;
+    settingsWinReadyPromise = null;
+  });
+
+  try {
+    await settingsWinReadyPromise;
+  } catch (err) {
+    settingsWin = null;
+    settingsWinReady = false;
+    settingsWinReadyPromise = null;
+    throw err;
+  }
+
+  return settingsWin;
+}
+
+export async function openSettingsWindow(config) {
+  var win = await ensureSettingsWindow();
+  await emitTo('settings', 'settings:open', config || {});
+  await win.show();
+  await win.setFocus();
 }
 
 // --- Context menu window ---
@@ -218,4 +271,8 @@ export async function openChatWindow(pet) {
     placeholder: 'Say something to ' + pet.petName + '...',
   });
   await chat.setFocus();
+}
+
+export function getChatWindow() {
+  return chatWin;
 }

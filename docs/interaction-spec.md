@@ -62,11 +62,21 @@ Settings should feel live, light, and trustworthy.
 Current rules:
 
 - opening settings should reflect the pet's live current state
+- the settings window should remain draggable by its header instead of feeling pinned to a fixed screen slot
+- changing character should preview immediately in the main window
 - changing scale should preview immediately in the main window
 - changing the AI provider should take effect in the current session for the next AI-backed action, without requiring a restart
 - reopening settings should preserve the current saved or previewed value, not jump back to an unrelated default
 - default scale should come from the runtime screen-aware default until the user explicitly saves an override
 - closing settings should feel instant, without waiting on slow disk work
+
+## Direct Chat Interaction
+
+Current rules:
+
+- single click should never open the chat input
+- double click is the only direct gesture that opens the chat input
+- if the chat input is already open, a single click on the pet should dismiss it
 
 ## Regression Strategy
 

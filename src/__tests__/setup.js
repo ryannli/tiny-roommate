@@ -28,15 +28,21 @@ vi.mock('@tauri-apps/api/window', () => ({
 }));
 
 vi.mock('@tauri-apps/api/webviewWindow', () => ({
-  WebviewWindow: vi.fn().mockImplementation(() => ({
-    setPosition: vi.fn().mockResolvedValue(undefined),
-    show: vi.fn().mockResolvedValue(undefined),
-    hide: vi.fn().mockResolvedValue(undefined),
-    setFocus: vi.fn().mockResolvedValue(undefined),
-    close: vi.fn(),
-    once: vi.fn(),
-    listen: vi.fn().mockResolvedValue(vi.fn()),
-  })),
+  WebviewWindow: Object.assign(
+    vi.fn().mockImplementation(() => ({
+      setPosition: vi.fn().mockResolvedValue(undefined),
+      show: vi.fn().mockResolvedValue(undefined),
+      hide: vi.fn().mockResolvedValue(undefined),
+      isVisible: vi.fn().mockResolvedValue(false),
+      setFocus: vi.fn().mockResolvedValue(undefined),
+      close: vi.fn(),
+      once: vi.fn(),
+      listen: vi.fn().mockResolvedValue(vi.fn()),
+    })),
+    {
+      getByLabel: vi.fn().mockResolvedValue(null),
+    }
+  ),
 }));
 
 vi.mock('@tauri-apps/api/event', () => ({

@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { SpriteAnimator, getSpriteRenderOptions, STATES } from './sprite.js';
 import { trackActivity, getTimeSignals, getIdleSeconds, buildContextString } from './signals.js';
-import { loadConfig, think } from './brain.js';
+import { loadConfig, saveConfigField, think } from './brain.js';
 import { voice } from './characters.js';
 import { initHearts } from './hearts.js';
 import { initBubble } from './bubble-manager.js';
@@ -67,6 +67,23 @@ initInteraction(pet);
 var providerChooser = initProviderChooser(pet);
 pet.ensureAiProviderSelected = providerChooser.ensureAiProviderSelected;
 
+function getSettingsSnapshot() {
+  return {
+    petName: pet.petName,
+    ownerName: pet.ownerName,
+    sprite: pet.currentSprite,
+    scale: pet.sprite.scale > 0 ? pet.sprite.scale : getDefaultScale(),
+    aiProvider: pet.aiProvider || 'claude',
+  };
+}
+
+function applySpriteSelection(spriteKey) {
+  if (!spriteKey || spriteKey === pet.currentSprite) return;
+  pet.currentSprite = spriteKey;
+  pet.sprite.image.src = '/sprites/' + spriteKey + '.png';
+  pet.sprite.edgeClear = getSpriteRenderOptions(spriteKey).edgeClear || 0;
+}
+
 document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
   var dpr = window.devicePixelRatio || 1;
@@ -77,31 +94,53 @@ document.addEventListener('contextmenu', function(e) {
 
 listen('contextmenu:action', function(event) {
   var action = event.payload && event.payload.action;
-  if (action === 'settings') openSettingsWindow().catch(function() {});
+  if (action === 'settings') {
+    configLoadedPromise.finally(function() {
+      openSettingsWindow(getSettingsSnapshot()).catch(function() {});
+    });
+  }
   if (action === 'inspect') invoke('toggle_devtools').catch(function() {});
   if (action === 'quit') pet.appWindow.close();
 });
 
-listen('settings:saved', function(event) {
+listen('settings:apply', function(event) {
   var d = event.payload || {};
   if (d.petName && d.petName !== pet.petName) {
     pet.petName = d.petName;
     pet.showBubble('call me ' + pet.petName + ' now!', 3000, true);
   }
-  if (d.ownerName !== undefined) pet.ownerName = d.ownerName;
+  if (d.ownerName !== undefined) {
+    pet.ownerName = d.ownerName;
+  }
   if (d.aiProvider) {
     pet.aiProvider = d.aiProvider;
     providerChooser.syncAiProvider(d.aiProvider);
+    saveConfigField('ai_provider', d.aiProvider).catch(function() {});
   }
-  if (d.sprite && d.sprite !== pet.currentSprite) {
-    pet.currentSprite = d.sprite;
-    pet.sprite.image.src = '/sprites/' + d.sprite + '.png';
-    pet.sprite.edgeClear = getSpriteRenderOptions(d.sprite).edgeClear || 0;
+  if (d.sprite) {
+    applySpriteSelection(d.sprite);
+    saveConfigField('sprite', d.sprite).catch(function() {});
   }
   if (d.scale && d.scale !== pet.sprite.scale) {
     pet.sprite.setScale(d.scale);
     resizeWindowToFit();
+    saveConfigField('pet_scale', String(d.scale)).catch(function() {});
   }
+  if (d.petName !== undefined) saveConfigField('pet_name', d.petName).catch(function() {});
+  if (d.ownerName !== undefined) saveConfigField('owner_name', d.ownerName).catch(function() {});
+});
+
+listen('settings:preview-scale', function(event) {
+  var scale = event.payload && parseFloat(event.payload.scale);
+  if (!scale || scale <= 0 || scale === pet.sprite.scale) return;
+  pet.sprite.setScale(scale);
+  resizeWindowToFit();
+});
+
+listen('settings:preview-sprite', function(event) {
+  var sprite = event.payload && event.payload.sprite;
+  if (!sprite) return;
+  applySpriteSelection(sprite);
 });
 
 listen('chat:submit', function(event) {
@@ -152,15 +191,13 @@ function animationLoop(timestamp) {
 }
 requestAnimationFrame(animationLoop);
 
-loadConfig().then(function(cfg) {
+var configLoadedPromise = loadConfig().then(function(cfg) {
   pet.petName = cfg.pet.name;
   pet.ownerName = cfg.owner.name;
   pet.aiProvider = cfg.aiProvider;
   providerChooser.syncAiProvider(cfg.aiProvider);
   if (cfg.sprite && cfg.sprite !== pet.currentSprite) {
-    pet.currentSprite = cfg.sprite;
-    pet.sprite.image.src = '/sprites/' + pet.currentSprite + '.png';
-    pet.sprite.edgeClear = getSpriteRenderOptions(pet.currentSprite).edgeClear || 0;
+    applySpriteSelection(cfg.sprite);
   }
   var scale = cfg.pet_scale > 0 ? cfg.pet_scale : getDefaultScale();
   pet.sprite.setScale(scale);

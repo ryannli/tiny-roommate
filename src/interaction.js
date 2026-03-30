@@ -3,7 +3,7 @@
 import { STATES } from './sprite.js';
 import { getTimeSignals, getIdleSeconds, buildContextString } from './signals.js';
 import { think } from './brain.js';
-import { openChatWindow } from './settings.js';
+import { getChatWindow, openChatWindow } from './settings.js';
 
 var PET_HOLD_MS = 500;
 var SWING_DAMPING = 0.92;
@@ -183,6 +183,19 @@ export function initInteraction(pet) {
       pet.sprite.setState('idle');
       return;
     }
+
+    var chatWin = getChatWindow();
+    if (chatWin && typeof chatWin.isVisible === 'function') {
+      try {
+        if (await chatWin.isVisible()) {
+          await chatWin.hide();
+          pet.sprite.setState('idle');
+          pet.lastInteractionTime = Date.now();
+          return;
+        }
+      } catch (err) {}
+    }
+
     pet.gainHeart();
     pet.sprite.setState('talk', function() { pet.sprite.setState('idle'); });
     if (pet.llmBusy) {

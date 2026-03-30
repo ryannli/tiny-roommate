@@ -64,6 +64,7 @@ Current rules:
 
 - opening settings should reflect the pet's live current state
 - the settings window should remain draggable by its header instead of feeling pinned to a fixed screen slot
+- the Pet Name and Call me fields should share the first compact row when space allows
 - the AI provider chooser should appear before character selection in the settings flow
 - changing character should preview immediately in the main window, including imported custom characters
 - changing scale should preview immediately in the main window

@@ -43,6 +43,15 @@
     border-bottom: 1px solid rgba(200, 160, 120, 0.08);
   }
   .settings-section:last-child { border-bottom: none; }
+  .settings-section-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-items: start;
+  }
+  .settings-field {
+    min-width: 0;
+  }
   .settings-section label {
     display: block;
     font: 500 11px/1 'SF Pro Rounded', system-ui, sans-serif;
@@ -66,6 +75,11 @@
   }
   .settings-section input[type="text"]:focus { border-color: rgba(220, 140, 90, 0.5); }
   .settings-section input[type="text"]::placeholder { color: rgba(150, 110, 80, 0.35); }
+  @media (max-width: 360px) {
+    .settings-section-row {
+      grid-template-columns: 1fr;
+    }
+  }
   .slider-row {
     display: flex;
     align-items: center;
@@ -333,13 +347,15 @@
       <h2>Settings</h2>
       <button class="settings-close" id="settings-close">&times;</button>
     </div>
-    <div class="settings-section">
-      <label>Pet Name</label>
-      <input type="text" id="setting-pet-name" placeholder="Phoebe" />
-    </div>
-    <div class="settings-section">
-      <label>Call me</label>
-      <input type="text" id="setting-owner-name" placeholder="How should your pet call you?" />
+    <div class="settings-section settings-section-row">
+      <div class="settings-field">
+        <label>Pet Name</label>
+        <input type="text" id="setting-pet-name" placeholder="Phoebe" />
+      </div>
+      <div class="settings-field">
+        <label>Call me</label>
+        <input type="text" id="setting-owner-name" placeholder="How should your pet call you?" />
+      </div>
     </div>
     <div class="settings-section">
       <label>Pet Size</label>

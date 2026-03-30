@@ -20,6 +20,7 @@ The project should not rely on tribal knowledge or scattered chat history to exp
 ### While Making Changes
 
 - If the change alters behavior, UX, or workflow, update the relevant docs in the same PR.
+- This includes porting or restoring behavior from another branch when the current branch docs do not already describe it.
 - If the implementation no longer matches the current docs, do not silently leave them diverged.
 - If a change is intentionally spec-breaking, update the spec first or in the same patch.
 - If docs are intentionally not updated, make that explicit in the PR and give a short reason.

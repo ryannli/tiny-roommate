@@ -14,6 +14,7 @@ Treat `docs/` as the current source of truth for product, interaction, and workf
 ## Repo-Specific Rules
 
 - If code changes user-facing behavior, update the relevant docs in the same change.
+- This still applies when porting, restoring, or backporting behavior from another branch or PR. Do not assume "it already exists elsewhere" means docs can be skipped here.
 - If docs are intentionally not updated, explicitly mark the PR as a docs bypass and give a reason.
 - Do not leave docs and code silently diverged.
 - `.pet-data/` is runtime data and is not checked into git.

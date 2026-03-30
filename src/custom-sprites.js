@@ -3,6 +3,7 @@
 
 import { Command } from '@tauri-apps/plugin-shell';
 import { ensurePetDataPath, PET_DATA_PATH } from './brain.js';
+import { CUSTOM_SPRITE_PREFIX, isCustomSpriteKey } from './sprite-keys.js';
 
 function shellQuote(value) {
   return "'" + String(value).replace(/'/g, "'\\''" ) + "'";
@@ -71,7 +72,7 @@ async function writeBinaryFile(path, arrayBuf) {
 export async function importCustomSprite(file, displayName) {
   var dir = await getCustomDir();
   var projectRoot = getProjectRoot();
-  var key = 'custom_' + Date.now();
+  var key = CUSTOM_SPRITE_PREFIX + Date.now();
 
   // Write raw file to temp location
   var rawPath = dir + '/' + key + '_raw.png';
@@ -142,7 +143,7 @@ export async function deleteCustomSprite(key) {
 
 // Check if a sprite key is a custom sprite
 export function isCustomSprite(key) {
-  return key && key.indexOf('custom_') === 0;
+  return isCustomSpriteKey(key);
 }
 
 // Sprite generation prompt for users to copy

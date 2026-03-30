@@ -21,6 +21,7 @@ Current rules:
 - they live in a reserved top-right area of the main window
 - they should read as "next to" the pet, not "on top of" the pet
 - they should not cover the pet's face or central silhouette
+- when they need a nudge, bias them farther toward the outer top-right corner rather than inward over the pet
 - if their measured size changes, the window layout should adapt to them
 
 ## Speech Bubble
@@ -63,7 +64,8 @@ Current rules:
 
 - opening settings should reflect the pet's live current state
 - the settings window should remain draggable by its header instead of feeling pinned to a fixed screen slot
-- changing character should preview immediately in the main window
+- the AI provider chooser should appear before character selection in the settings flow
+- changing character should preview immediately in the main window, including imported custom characters
 - changing scale should preview immediately in the main window
 - changing the AI provider should take effect in the current session for the next AI-backed action, without requiring a restart
 - reopening settings should preserve the current saved or previewed value, not jump back to an unrelated default
@@ -74,6 +76,7 @@ Current rules:
 
 Current rules:
 
+- a single click should interrupt autonomous walking immediately and return the pet to idle
 - single click should never open the chat input
 - double click is the only direct gesture that opens the chat input
 - if the chat input is already open, a single click on the pet should dismiss it

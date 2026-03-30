@@ -7,6 +7,7 @@ import { CHARACTERS } from './characters.js';
 import { getDefaultScale } from './settings.js';
 import { normalizeSettingsPayload } from './settings-state.js';
 import { listCustomSprites, importCustomSprite, loadCustomSpriteDataUrl, deleteCustomSprite, isCustomSprite, SPRITE_PROMPT } from './custom-sprites.js';
+import { buildSpritePreviewPayload } from './sprite-preview.js';
 
 var appWindow = getCurrentWindow();
 var settingsHeader = document.querySelector('.settings-header');
@@ -106,9 +107,19 @@ function setCurrentSprite(sprite, options) {
 
   if (options.preview === false) return;
 
-  emitTo('main', 'settings:preview-sprite', {
-    sprite: currentSprite,
-  }).catch(function() {});
+  var previewDataUrl = options.dataUrl || customSpriteCache[currentSprite] || null;
+
+  emitTo('main', 'settings:preview-sprite', buildSpritePreviewPayload(currentSprite, previewDataUrl)).catch(function() {});
+
+  if (isCustomSprite(currentSprite) && !previewDataUrl) {
+    var requestedSprite = currentSprite;
+    loadCustomSpriteDataUrl(requestedSprite).then(function(dataUrl) {
+      if (!dataUrl) return;
+      customSpriteCache[requestedSprite] = dataUrl;
+      if (currentSprite !== requestedSprite) return;
+      emitTo('main', 'settings:preview-sprite', buildSpritePreviewPayload(requestedSprite, dataUrl)).catch(function() {});
+    }).catch(function() {});
+  }
 }
 
 var providerContainer = document.getElementById('settings-ai-provider-options');
@@ -271,12 +282,10 @@ importFileInput.addEventListener('change', async function() {
     importStatus.textContent = 'Done! "' + result.displayName + '" is ready.';
     importStatus.className = 'import-status success';
 
-    // Select the new sprite
-    setCurrentSprite(result.key);
-
-    // Pre-load the data URL
+    // Pre-load the data URL before selecting so the first preview is instant.
     var dataUrl = await loadCustomSpriteDataUrl(result.key);
     if (dataUrl) customSpriteCache[result.key] = dataUrl;
+    setCurrentSprite(result.key, { dataUrl: dataUrl });
 
     await refreshCustomSprites();
     updateActiveSprite();

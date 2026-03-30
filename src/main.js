@@ -11,7 +11,9 @@ import { initBubble } from './bubble-manager.js';
 import { initBehavior } from './behavior.js';
 import { initInteraction } from './interaction.js';
 import { getDefaultScale, initProviderChooser, openSettingsWindow, showContextMenu, openChatWindow } from './settings.js';
+import { applyStatusLayout } from './status-layout.js';
 import { isCustomSprite, loadCustomSpriteDataUrl } from './custom-sprites.js';
+import { resolveImmediateSpriteSource } from './sprite-preview.js';
 
 var pet = {
   canvas: document.getElementById('pet'),
@@ -43,6 +45,7 @@ pet.sprite = new SpriteAnimator(
   getSpriteRenderOptions(pet.currentSprite)
 );
 trackActivity();
+applyStatusLayout(document);
 
 function resizeWindowToFit() {
   var size = pet.sprite.getSize();
@@ -78,15 +81,23 @@ function getSettingsSnapshot() {
   };
 }
 
-function applySpriteSelection(spriteKey) {
-  if (!spriteKey || spriteKey === pet.currentSprite) return;
+function applySpriteSelection(spriteKey, options) {
+  options = options || {};
+  if (!spriteKey) return;
+  var immediateSrc = resolveImmediateSpriteSource(spriteKey, options.dataUrl);
+  if (spriteKey === pet.currentSprite && !immediateSrc) return;
   pet.currentSprite = spriteKey;
   if (isCustomSprite(spriteKey)) {
+    pet.sprite.edgeClear = 0;
+    if (immediateSrc) {
+      pet.sprite.image.src = immediateSrc;
+      return;
+    }
     loadCustomSpriteDataUrl(spriteKey).then(function(dataUrl) {
-      if (dataUrl) pet.sprite.image.src = dataUrl;
+      if (dataUrl && pet.currentSprite === spriteKey) pet.sprite.image.src = dataUrl;
     });
   } else {
-    pet.sprite.image.src = '/sprites/' + spriteKey + '.png';
+    pet.sprite.image.src = immediateSrc;
     pet.sprite.edgeClear = getSpriteRenderOptions(spriteKey).edgeClear || 0;
   }
 }
@@ -145,9 +156,10 @@ listen('settings:preview-scale', function(event) {
 });
 
 listen('settings:preview-sprite', function(event) {
-  var sprite = event.payload && event.payload.sprite;
+  var payload = event.payload || {};
+  var sprite = payload.sprite;
   if (!sprite) return;
-  applySpriteSelection(sprite);
+  applySpriteSelection(sprite, { dataUrl: payload.dataUrl });
 });
 
 listen('chat:submit', function(event) {

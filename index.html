@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <style>
+  :root {
+    --pet-status-top: -4px;
+    --pet-status-right: 0px;
+    --pet-status-gap: 3px;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
     background: transparent;
@@ -108,11 +113,12 @@
 
   #pet-status {
     position: fixed;
-    right: 8px; top: 4px;
+    right: var(--pet-status-right);
+    top: var(--pet-status-top);
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 3px;
+    gap: var(--pet-status-gap);
     z-index: 50;
   }
   #together {

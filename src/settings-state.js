@@ -31,8 +31,8 @@ export function normalizeSettingsPayload(payload, options) {
   options = options || {};
 
   return {
-    petName: payload.petName || '',
-    ownerName: payload.ownerName || '',
+    petName: payload.petName !== undefined ? payload.petName : (options.defaultPetName || ''),
+    ownerName: payload.ownerName !== undefined ? payload.ownerName : (options.defaultOwnerName || ''),
     sprite: payload.sprite || options.defaultSprite || 'tabby_cat',
     scale: resolveSettingsScale(payload.scale, options.defaultScale),
     aiProvider: resolveAiProvider(payload.aiProvider, options.defaultAiProvider),

@@ -1,7 +1,7 @@
 // TinyRoommate — Main Entry Point
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/core';
-import { listen } from '@tauri-apps/api/event';
+import { emitTo, listen } from '@tauri-apps/api/event';
 import { SpriteAnimator, getSpriteRenderOptions, STATES } from './sprite.js';
 import { trackActivity, getTimeSignals, getIdleSeconds, buildContextString } from './signals.js';
 import { loadConfig, saveConfigField, think } from './brain.js';
@@ -160,6 +160,12 @@ listen('settings:preview-sprite', function(event) {
   var sprite = payload.sprite;
   if (!sprite) return;
   applySpriteSelection(sprite, { dataUrl: payload.dataUrl });
+});
+
+listen('settings:request-state', function() {
+  configLoadedPromise.finally(function() {
+    emitTo('settings', 'settings:open', getSettingsSnapshot()).catch(function() {});
+  });
 });
 
 listen('chat:submit', function(event) {

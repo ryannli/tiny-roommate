@@ -14,6 +14,7 @@ var settingsHeader = document.querySelector('.settings-header');
 var currentSprite = 'tabby_cat';
 var currentAiProvider = 'claude';
 var isSaving = false;
+var hasHydratedSettings = false;
 var previewAnimId = null;
 var previewAnimators = [];
 var customSpriteCache = {}; // key -> dataUrl
@@ -312,12 +313,17 @@ scaleSlider.addEventListener('input', function() {
 });
 
 function applySettingsPayload(cfg) {
+  var petNameInput = document.getElementById('setting-pet-name');
+  var ownerNameInput = document.getElementById('setting-owner-name');
   var normalized = normalizeSettingsPayload(cfg, {
+    defaultPetName: petNameInput ? petNameInput.value : '',
+    defaultOwnerName: ownerNameInput ? ownerNameInput.value : '',
+    defaultSprite: currentSprite,
     defaultScale: getDefaultScale(),
-    defaultAiProvider: 'claude',
+    defaultAiProvider: currentAiProvider || 'claude',
   });
-  document.getElementById('setting-pet-name').value = normalized.petName;
-  document.getElementById('setting-owner-name').value = normalized.ownerName;
+  petNameInput.value = normalized.petName;
+  ownerNameInput.value = normalized.ownerName;
   setCurrentSprite(normalized.sprite, { preview: false });
   currentAiProvider = normalized.aiProvider;
   var scale = normalized.scale;
@@ -326,6 +332,7 @@ function applySettingsPayload(cfg) {
   updateActiveProvider();
   refreshCustomSprites();
   startPreviewAnimations();
+  hasHydratedSettings = true;
   isSaving = false;
 }
 
@@ -335,6 +342,10 @@ listen('settings:open', function(event) {
 
 function saveAndClose() {
   if (isSaving) return;
+  if (!hasHydratedSettings) {
+    appWindow.hide().catch(function() {});
+    return;
+  }
   isSaving = true;
   var newPetName = document.getElementById('setting-pet-name').value.trim();
   var newOwnerName = document.getElementById('setting-owner-name').value.trim();
@@ -405,3 +416,4 @@ function stopPreviewAnimations() {
 }
 
 emit('settings:ready', { label: 'settings' }).catch(function() {});
+emitTo('main', 'settings:request-state', { label: 'settings' }).catch(function() {});

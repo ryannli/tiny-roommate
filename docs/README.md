@@ -4,6 +4,8 @@ This `docs/` folder is the current source of truth for product, interaction, and
 
 When a PR changes user-facing behavior, design intent, or developer workflow, the relevant docs here should be updated in the same change.
 
+For the GitHub-facing contribution workflow and PR expectations, start with [Contributing](../.github/CONTRIBUTING.md).
+
 ## Read Order
 
 1. [Product Spec](./product-spec.md)

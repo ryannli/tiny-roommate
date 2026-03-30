@@ -60,7 +60,9 @@ Current rules:
 
 - opening settings should reflect the pet's live current state
 - changing scale should preview immediately in the main window
+- changing the AI provider should take effect in the current session for the next AI-backed action, without requiring a restart
 - reopening settings should preserve the current saved or previewed value, not jump back to an unrelated default
+- default scale should come from the runtime screen-aware default until the user explicitly saves an override
 - closing settings should feel instant, without waiting on slow disk work
 
 ## Regression Strategy

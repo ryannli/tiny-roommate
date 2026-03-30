@@ -22,11 +22,14 @@ The project should not rely on tribal knowledge or scattered chat history to exp
 - If the change alters behavior, UX, or workflow, update the relevant docs in the same PR.
 - If the implementation no longer matches the current docs, do not silently leave them diverged.
 - If a change is intentionally spec-breaking, update the spec first or in the same patch.
+- If docs are intentionally not updated, make that explicit in the PR and give a short reason.
 
 ### Before Merging
 
 - summarize which spec files were consulted
 - summarize which spec files changed
+- in the PR, check exactly one: `Docs updated in this PR` or `Docs intentionally not updated in this PR`
+- if docs were intentionally not updated, fill in the bypass reason so reviewers know it was a conscious choice
 - run tests relevant to the change
 - run a production build for UI/runtime changes
 
@@ -46,8 +49,11 @@ The project should not rely on tribal knowledge or scattered chat history to exp
 - test-only changes
 - internal cleanup that preserves the same contract
 - renames or comments that do not affect meaning
+- small fixes that restore already-documented behavior without changing the contract
 
 If unsure, prefer a small docs update over silence.
+
+Even when a docs update is not needed, the PR should still explicitly mark that choice and explain why.
 
 ## Testing Philosophy
 
@@ -81,6 +87,7 @@ Agent expectations:
 - read the docs first
 - treat `docs/` as the current product/design source of truth
 - update docs when changing behavior
+- if docs are not updated, explicitly mark the PR as a docs bypass and give a reason
 - mention docs touched in the final summary
 - avoid heuristic patches when a clearer contract or helper can be introduced instead
 

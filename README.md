@@ -81,15 +81,11 @@ Pick a companion — or **make your own**.
 
 Each character has its own animations and voice lines. Want something different? Generate a spritesheet with any AI image tool (Gemini, Midjourney, etc.), drop it in, and it just works. See the **[Sprite Spec](SPRITE-SPEC.md)** for the asset format and TinyRoommate pipeline.
 
-## Project Docs
+## Contributing
 
-If you're contributing or reviewing changes, start with **[docs/README.md](docs/README.md)**.
+If you're contributing or reviewing changes, start with **[Contributing](.github/CONTRIBUTING.md)**.
 
-It links to the current:
-
-- product spec
-- interaction/UI spec
-- development workflow
+For the current product and interaction specs, use **[docs/README.md](docs/README.md)**.
 
 ## A Day in Its Life
 

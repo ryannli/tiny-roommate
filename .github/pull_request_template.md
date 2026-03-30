@@ -6,8 +6,10 @@
 ## Spec Alignment
 
 - Relevant docs/specs consulted:
-- Docs updated in this PR:
-- If docs were not updated, why is the change spec-neutral?
+- [ ] Docs updated in this PR
+- [ ] Docs intentionally not updated in this PR
+- Docs updated:
+- Docs bypass reason:
 
 ## Validation
 

@@ -7,6 +7,41 @@ on:
     branches: [main]
 
 jobs:
+  docs-alignment:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate docs alignment section
+        env:
+          PR_BODY: ${{ github.event.pull_request.body || '' }}
+        run: |
+          printf '%s\n' "$PR_BODY" > pr_body.txt
+
+          updated_count=$(grep -Ec '^- \[[xX]\] Docs updated in this PR$' pr_body.txt || true)
+          bypass_count=$(grep -Ec '^- \[[xX]\] Docs intentionally not updated in this PR$' pr_body.txt || true)
+
+          if [ $((updated_count + bypass_count)) -ne 1 ]; then
+            echo "PRs must choose exactly one docs path: docs updated or docs bypass."
+            exit 1
+          fi
+
+          if [ "$updated_count" -eq 1 ]; then
+            docs_updated=$(awk '/^- Docs updated:/{sub(/^- Docs updated:[[:space:]]*/,""); print; exit}' pr_body.txt)
+            if [ -z "$docs_updated" ]; then
+              echo "When 'Docs updated in this PR' is checked, fill in 'Docs updated:'."
+              exit 1
+            fi
+          fi
+
+          if [ "$bypass_count" -eq 1 ]; then
+            bypass_reason=$(awk '/^- Docs bypass reason:/{sub(/^- Docs bypass reason:[[:space:]]*/,""); print; exit}' pr_body.txt)
+            if [ -z "$bypass_reason" ]; then
+              echo "When docs are intentionally not updated, provide a docs bypass reason."
+              exit 1
+            fi
+          fi
+
   test:
     runs-on: ubuntu-latest
 

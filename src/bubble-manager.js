@@ -371,7 +371,8 @@ export function initBubble(pet) {
       {
         random: createFixedRandom(placementRandom),
         margin: scaleValue(BUBBLE_MARGIN, bubbleScaleFactor),
-        gap: scaleValue(BUBBLE_LAYOUT_DEFAULTS.gap, bubbleScaleFactor),
+        minGap: scaleValue(BUBBLE_LAYOUT_DEFAULTS.minGap, bubbleScaleFactor),
+        maxGap: scaleValue(BUBBLE_LAYOUT_DEFAULTS.gap, bubbleScaleFactor),
         petPadding: scaleValue(BUBBLE_LAYOUT_DEFAULTS.petPadding, bubbleScaleFactor),
         jitterX: scaleValue(BUBBLE_LAYOUT_DEFAULTS.jitterX, bubbleScaleFactor),
         jitterY: scaleValue(BUBBLE_LAYOUT_DEFAULTS.jitterY, bubbleScaleFactor),

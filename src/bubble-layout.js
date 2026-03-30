@@ -1,12 +1,14 @@
 export var BUBBLE_LAYOUT_DEFAULTS = {
   margin: 12,
   gap: 20,
+  minGap: 10,
   petPadding: 10,
   jitterX: 24,
   jitterY: 14,
   minWidth: 180,
   maxWidth: 280,
   widthStep: 24,
+  gapGrowthFactor: 0.1,
 };
 
 export function clamp(value, min, max) {
@@ -27,6 +29,21 @@ export function rectOverlapArea(a, b) {
   var overlapWidth = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
   var overlapHeight = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
   return overlapWidth * overlapHeight;
+}
+
+export function resolveBubbleGap(anchorRect, bubbleHeight, options) {
+  options = options || {};
+  var minGap = options.minGap == null ? BUBBLE_LAYOUT_DEFAULTS.minGap : options.minGap;
+  var maxGap = options.maxGap == null ? BUBBLE_LAYOUT_DEFAULTS.gap : options.maxGap;
+  var gapGrowthFactor = options.gapGrowthFactor == null
+    ? BUBBLE_LAYOUT_DEFAULTS.gapGrowthFactor
+    : options.gapGrowthFactor;
+  var heightThreshold = options.heightThreshold == null
+    ? anchorRect.height * 0.5
+    : options.heightThreshold;
+  var heightOffset = Math.max(0, bubbleHeight - heightThreshold);
+
+  return clamp(Math.round(minGap + heightOffset * gapGrowthFactor), minGap, maxGap);
 }
 
 export function buildBubbleCandidates(anchorRect, bubbleWidth, bubbleHeight, jitterX, jitterY, gap) {
@@ -111,11 +128,15 @@ export function scoreBubblePlacement(candidate, bubbleWidth, bubbleHeight, bound
 export function pickBubblePlacementWithinBounds(anchorRect, bubbleWidth, bubbleHeight, boundsRect, options) {
   options = options || {};
   var margin = options.margin || BUBBLE_LAYOUT_DEFAULTS.margin;
-  var gap = options.gap || BUBBLE_LAYOUT_DEFAULTS.gap;
   var petPadding = options.petPadding || BUBBLE_LAYOUT_DEFAULTS.petPadding;
   var jitterXRange = options.jitterX || BUBBLE_LAYOUT_DEFAULTS.jitterX;
   var jitterYRange = options.jitterY || BUBBLE_LAYOUT_DEFAULTS.jitterY;
   var random = options.random || Math.random;
+  var gap = options.gap;
+
+  if (gap == null) {
+    gap = resolveBubbleGap(anchorRect, bubbleHeight, options);
+  }
 
   var jitterX = Math.round((random() - 0.5) * jitterXRange);
   var jitterY = Math.round((random() - 0.5) * jitterYRange);

@@ -34,6 +34,7 @@ Speech bubbles should feel natural and non-mechanical, but still respect a few s
 - side placements are not part of the intended design
 - placement can be slightly randomized within a small range so repeated bubbles do not feel rigid
 - randomness should stay bounded and subtle
+- short bubbles should be allowed to sit closer to the pet, while taller bubbles should leave a bit more breathing room
 - while the pet is dragged, the bubble should stay visually anchored to the pet instead of accumulating offset
 - when the pet crosses to another display, the bubble should follow onto that display and clamp against that display's visible work area
 

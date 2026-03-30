@@ -6,6 +6,7 @@ import {
   pickBubblePlacement,
   pickBubblePlacementWithinBounds,
   rectOverlapArea,
+  resolveBubbleGap,
   resolveBubbleRect,
   resolveBubbleRectWithinBounds,
   resolveWideBubbleSize,
@@ -17,6 +18,41 @@ describe('buildBubbleCandidates', () => {
     var candidates = buildBubbleCandidates(rect, 180, 80, 0, 0, BUBBLE_LAYOUT_DEFAULTS.gap);
     expect(candidates.map(function(candidate) { return candidate.name; })).toEqual(['top', 'top-right', 'top-left']);
     expect(candidates.map(function(candidate) { return candidate.arrowSide; })).toEqual(['bottom', 'bottom', 'bottom']);
+  });
+
+  it('keeps jitter bounded to a small range', function() {
+    var rect = { left: 400, top: 520, right: 520, bottom: 640, width: 120, height: 120 };
+    var gap = resolveBubbleGap(rect, 88);
+    var leftBiased = buildBubbleCandidates(
+      rect,
+      180,
+      88,
+      -BUBBLE_LAYOUT_DEFAULTS.jitterX / 2,
+      -BUBBLE_LAYOUT_DEFAULTS.jitterY / 2,
+      gap
+    );
+    var rightBiased = buildBubbleCandidates(
+      rect,
+      180,
+      88,
+      BUBBLE_LAYOUT_DEFAULTS.jitterX / 2,
+      BUBBLE_LAYOUT_DEFAULTS.jitterY / 2,
+      gap
+    );
+
+    expect(Math.abs(leftBiased[0].left - rightBiased[0].left)).toBeLessThanOrEqual(BUBBLE_LAYOUT_DEFAULTS.jitterX);
+    expect(Math.abs(leftBiased[0].top - rightBiased[0].top)).toBeLessThanOrEqual(BUBBLE_LAYOUT_DEFAULTS.jitterY);
+  });
+
+  it('moves short bubbles closer than tall bubbles', function() {
+    var rect = { left: 500, top: 500, right: 620, bottom: 620, width: 120, height: 120 };
+    var shortGap = resolveBubbleGap(rect, 60);
+    var tallGap = resolveBubbleGap(rect, 140);
+    var shortTop = buildBubbleCandidates(rect, 200, 60, 0, 0, shortGap)[0];
+    var tallTop = buildBubbleCandidates(rect, 200, 140, 0, 0, tallGap)[0];
+
+    expect(shortGap).toBeLessThan(tallGap);
+    expect(shortTop.top - (rect.top - 60)).toBeGreaterThan(tallTop.top - (rect.top - 140));
   });
 });
 
@@ -38,25 +74,6 @@ describe('pickBubblePlacement', () => {
 
     expect(['top', 'top-right', 'top-left']).toContain(placement.name);
     expect(rectOverlapArea(bubbleRect, keepOutRect)).toBe(0);
-  });
-
-  it('keeps jitter bounded to a small range', function() {
-    var rect = { left: 400, top: 520, right: 520, bottom: 640, width: 120, height: 120 };
-    var leftBiased = pickBubblePlacement(rect, 180, 88, 1440, 900, {
-      random: (function() {
-        var values = [0, 0, 0];
-        return function() { return values.shift(); };
-      })(),
-    });
-    var rightBiased = pickBubblePlacement(rect, 180, 88, 1440, 900, {
-      random: (function() {
-        var values = [1, 1, 0];
-        return function() { return values.shift(); };
-      })(),
-    });
-
-    expect(Math.abs(leftBiased.left - rightBiased.left)).toBeLessThanOrEqual(BUBBLE_LAYOUT_DEFAULTS.jitterX);
-    expect(Math.abs(leftBiased.top - rightBiased.top)).toBeLessThanOrEqual(BUBBLE_LAYOUT_DEFAULTS.jitterY);
   });
 
   it('clamps the resolved bubble inside the screen margin', function() {
@@ -96,6 +113,19 @@ describe('pickBubblePlacement', () => {
     expect(bubbleRect.top).toBeGreaterThanOrEqual(boundsRect.top + BUBBLE_LAYOUT_DEFAULTS.margin);
     expect(bubbleRect.right).toBeLessThanOrEqual(boundsRect.right - BUBBLE_LAYOUT_DEFAULTS.margin);
     expect(rectOverlapArea(bubbleRect, expandRect(rect, BUBBLE_LAYOUT_DEFAULTS.petPadding))).toBe(0);
+  });
+});
+
+describe('resolveBubbleGap', () => {
+  it('keeps short bubbles near the pet', function() {
+    var rect = { left: 100, top: 300, right: 220, bottom: 420, width: 120, height: 120 };
+    expect(resolveBubbleGap(rect, 60)).toBe(BUBBLE_LAYOUT_DEFAULTS.minGap);
+  });
+
+  it('adds more clearance for taller bubbles', function() {
+    var rect = { left: 100, top: 300, right: 220, bottom: 420, width: 120, height: 120 };
+    expect(resolveBubbleGap(rect, 140)).toBeGreaterThan(resolveBubbleGap(rect, 60));
+    expect(resolveBubbleGap(rect, 300)).toBeLessThanOrEqual(BUBBLE_LAYOUT_DEFAULTS.gap);
   });
 });
 

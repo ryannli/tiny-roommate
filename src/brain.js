@@ -373,10 +373,16 @@ export function parseResponse(raw) {
 var providerAvailability = Object.create(null);
 
 export async function checkAiCli(provider) {
+  return checkAiCliWithOptions(provider);
+}
+
+async function checkAiCliWithOptions(provider, options) {
   var providerInfo = getAiProviderInfo(provider);
   if (!providerInfo) return false;
-  if (providerAvailability[providerInfo.id] !== undefined) {
-    return providerAvailability[providerInfo.id];
+  if (!options || !options.refresh) {
+    if (providerAvailability[providerInfo.id] !== undefined) {
+      return providerAvailability[providerInfo.id];
+    }
   }
   try {
     var result = await Command.create(providerInfo.command, ['--version']).execute();
@@ -385,6 +391,15 @@ export async function checkAiCli(provider) {
     providerAvailability[providerInfo.id] = false;
   }
   return providerAvailability[providerInfo.id];
+}
+
+async function ensureAiAvailable(provider) {
+  var providerInfo = getAiProviderInfo(provider);
+  if (!providerInfo) return false;
+  if (providerAvailability[providerInfo.id] === true) {
+    return providerAvailability[providerInfo.id];
+  }
+  return checkAiCliWithOptions(providerInfo.id, { refresh: true });
 }
 
 export function isAiAvailable(provider) {
@@ -407,7 +422,7 @@ function runInPetDir(prompt, options) {
 }
 
 export async function think(context) {
-  if (!isAiAvailable()) return null;
+  if (!await ensureAiAvailable()) return null;
 
   const recentActivity = activityLog.length > 0
     ? '\nRecent activity log:\n' + activityLog.slice(-5).map(a => '- ' + a.time + ': ' + (a.description || a.type)).join('\n')
@@ -439,7 +454,8 @@ export async function think(context) {
 // --- Daily digest ---
 
 export async function generateDailyDigest() {
-  if (!isAiAvailable() || activityLog.length < 3) return null;
+  if (activityLog.length < 3) return null;
+  if (!await ensureAiAvailable()) return null;
 
   const logText = activityLog.map(a => `${a.time}: ${a.description || a.type}`).join('\n');
   const petName = config.pet.name || 'Phoebe';
@@ -456,7 +472,7 @@ export async function generateDailyDigest() {
 }
 
 export async function summarizePerceptionsForTimeline(date, perceptions) {
-  if (!isAiAvailable()) return null;
+  if (!await ensureAiAvailable()) return null;
 
   try {
     const result = await executeAiCommand(
@@ -469,7 +485,7 @@ export async function summarizePerceptionsForTimeline(date, perceptions) {
 }
 
 export async function describeScreenImage(imagePath) {
-  if (!isAiAvailable()) return null;
+  if (!await ensureAiAvailable()) return null;
 
   var prompt = 'Read the file at ' + imagePath + '. Describe in 1-2 SHORT sentences what the user is doing. Focus on: what app, what content. Output ONLY the description.';
 

@@ -1,11 +1,45 @@
-import { describe, it, expect, vi } from 'vitest';
+import { readFile } from 'node:fs/promises';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock Tauri shell plugin before importing brain
+var createMock = vi.fn();
 vi.mock('@tauri-apps/plugin-shell', () => ({
-  Command: { create: () => ({ execute: () => Promise.resolve({ stdout: '', code: 0 }) }) },
+  Command: { create: createMock },
 }));
 
-const { parseResponse, normalizeAiProvider, getSupportedAiProviders } = await import('../brain.js');
+createMock.mockImplementation(function() {
+  return {
+    execute: function() {
+      return Promise.resolve({ stdout: '', code: 0 });
+    },
+  };
+});
+
+const {
+  parseResponse,
+  normalizeAiProvider,
+  getSupportedAiProviders,
+  saveConfigField,
+  think,
+} = await import('../brain.js');
+
+beforeEach(() => {
+  createMock.mockClear();
+  createMock.mockImplementation(function(command, args) {
+    return {
+      execute: function() {
+        if (command === 'bash') {
+          var script = Array.isArray(args) ? args[1] : '';
+          if (script && script.indexOf('while [ ! -f "$dir/package.json" ]') >= 0) {
+            return Promise.resolve({ stdout: '/tmp/tinyroommate-pr7-followup\n', code: 0 });
+          }
+          return Promise.resolve({ stdout: '', code: 0 });
+        }
+        return Promise.resolve({ stdout: '', code: 0 });
+      },
+    };
+  });
+});
 
 describe('parseResponse', () => {
   it('extracts text, state, reactions from clean JSON', () => {
@@ -82,5 +116,52 @@ describe('AI provider helpers', () => {
     var providers = getSupportedAiProviders().map(function(provider) { return provider.id; });
     expect(providers).toContain('claude');
     expect(providers).toContain('gemini');
+  });
+
+  it('uses the newly selected provider without requiring a restart', async () => {
+    saveConfigField('ai_provider', 'claude');
+    saveConfigField('ai_provider', 'gemini');
+
+    createMock.mockImplementation(function(command, args) {
+      return {
+        execute: function() {
+          if (command === 'bash') {
+            var script = Array.isArray(args) ? args[1] : '';
+            if (script && script.indexOf('while [ ! -f "$dir/package.json" ]') >= 0) {
+              return Promise.resolve({ stdout: '/tmp/tinyroommate-pr7-followup\n', code: 0 });
+            }
+            return Promise.resolve({ stdout: '', code: 0 });
+          }
+          if (command === 'gemini' && Array.isArray(args) && args[0] === '--version') {
+            return Promise.resolve({ stdout: '1.0.0\n', code: 0 });
+          }
+          if (command === 'gemini' && Array.isArray(args) && args[0] === '-p') {
+            return Promise.resolve({ stdout: '{"text":"hi from gemini","state":"happy"}', code: 0 });
+          }
+          throw new Error('Unexpected command: ' + command + ' ' + JSON.stringify(args || []));
+        },
+      };
+    });
+
+    var result = await think('say hi');
+
+    expect(result).toEqual({
+      text: 'hi from gemini',
+      state: 'happy',
+      reactions: [],
+    });
+    expect(createMock).toHaveBeenCalledWith('gemini', ['--version']);
+    expect(
+      createMock.mock.calls.some(function(call) {
+        return call[0] === 'gemini' && Array.isArray(call[1]) && call[1][0] === '-p';
+      })
+    ).toBe(true);
+  });
+});
+
+describe('template config defaults', () => {
+  it('does not hard-code a default pet scale in the template', async () => {
+    var text = await readFile(process.cwd() + '/.pet-data-template/config.md', 'utf8');
+    expect(text).not.toContain('pet_scale: 1.5');
   });
 });

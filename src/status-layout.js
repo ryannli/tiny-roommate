@@ -1,5 +1,5 @@
 export const STATUS_UI_LAYOUT = Object.freeze({
-  top: -4,
+  top: 0,
   right: 0,
   gap: 3,
 });

@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { applyStatusLayout, STATUS_UI_LAYOUT } from '../status-layout.js';
 
 describe('status UI layout', function() {
-  it('keeps the status block tucked closer to the outer top-right corner', function() {
+  it('keeps the status block inside the outer top-right corner', function() {
     expect(STATUS_UI_LAYOUT).toEqual({
-      top: -4,
+      top: 0,
       right: 0,
       gap: 3,
     });
@@ -17,7 +17,7 @@ describe('status UI layout', function() {
 
     applyStatusLayout(document);
 
-    expect(document.documentElement.style.getPropertyValue('--pet-status-top')).toBe('-4px');
+    expect(document.documentElement.style.getPropertyValue('--pet-status-top')).toBe('0px');
     expect(document.documentElement.style.getPropertyValue('--pet-status-right')).toBe('0px');
     expect(document.documentElement.style.getPropertyValue('--pet-status-gap')).toBe('3px');
   });

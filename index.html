@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <style>
   :root {
-    --pet-status-top: -4px;
+    --pet-status-top: 0px;
     --pet-status-right: 0px;
     --pet-status-gap: 3px;
   }
@@ -177,14 +177,20 @@
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 12px;
+    box-sizing: border-box;
     background: rgba(70, 48, 34, 0.24);
     backdrop-filter: blur(8px);
     z-index: 2600;
   }
   #provider-overlay.show { display: flex; }
   #provider-panel {
-    width: min(440px, calc(100vw - 24px));
+    width: 100%;
+    max-width: 440px;
+    max-height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    overflow-y: auto;
     padding: 22px 20px 20px;
     border-radius: 18px;
     background: linear-gradient(160deg, rgba(255, 252, 248, 0.98), rgba(255, 242, 233, 0.98));

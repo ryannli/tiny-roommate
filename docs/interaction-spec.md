@@ -18,11 +18,24 @@ The `Days Together` label and hearts are supporting metadata, not the main event
 
 Current rules:
 
-- they live in a reserved top-right area of the main window
+- they live in a reserved top-right area inside the main window, with no negative top offset
 - they should read as "next to" the pet, not "on top of" the pet
 - they should not cover the pet's face or central silhouette
 - when they need a nudge, bias them farther toward the outer top-right corner rather than inward over the pet
 - if their measured size changes, the window layout should adapt to them
+
+## Autonomous Walking
+
+- walking uses physical pixels for both Tauri window positions and monitor work-area bounds
+- the current monitor is selected from the pet window center, including displays with negative or offset coordinates
+- the pet size, margin, walking distance, and speed scale with the window scale factor
+- the complete pet stays inside the current monitor work area, clear of taskbars and docks
+
+## First-Launch Provider Chooser
+
+- the chooser fits within the current pet window without changing the saved pet scale
+- on small windows, the panel scrolls vertically so every provider remains reachable
+- the panel and its padding stay inside the window at normal and high DPI
 
 ## Speech Bubble
 

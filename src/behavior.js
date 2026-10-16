@@ -1,6 +1,7 @@
 // Autonomous behavior — perception, decision (LLM), animation
 
 import { Command } from '@tauri-apps/plugin-shell';
+import { monitorFromPoint } from '@tauri-apps/api/window';
 import { STATES } from './sprite.js';
 import { getTimeSignals, getIdleSeconds, captureScreenContext, buildContextString, isScreenRecordingDenied } from './signals.js';
 import { think, getActivityLog, generateDailyDigest, loadConfig, saveConfigField, hasCompletedOnboarding, ensurePetDataPath, checkAiCli, getAiProviderInfo, summarizePerceptionsForTimeline } from './brain.js';
@@ -229,25 +230,51 @@ export function initBehavior(pet) {
     pet.sprite.setState('walk');
 
     var pos = await pet.appWindow.outerPosition();
-    var screen = { width: window.screen.availWidth, height: window.screen.availHeight };
+    var scale = await pet.appWindow.scaleFactor();
     var size = pet.sprite.getSize();
+    var width = size.width * scale;
+    var height = size.height * scale;
+    var monitor = null;
+    try {
+      monitor = await monitorFromPoint(pos.x + width / 2, pos.y + height / 2);
+    } catch (err) {
+      monitor = null;
+    }
+    if (!pet.isWalking) return;
 
-    var dist = 80 + Math.random() * 150;
+    // Tauri positions and monitor work areas are physical pixels.
+    var area = monitor && monitor.workArea ? monitor.workArea : {
+      position: {
+        x: (window.screen.availLeft || 0) * scale,
+        y: (window.screen.availTop || 0) * scale,
+      },
+      size: {
+        width: window.screen.availWidth * scale,
+        height: window.screen.availHeight * scale,
+      },
+    };
+    var margin = SCREEN_MARGIN * scale;
+    var minX = area.position.x + margin;
+    var minY = area.position.y + margin;
+    var maxX = Math.max(minX, area.position.x + area.size.width - width - margin);
+    var maxY = Math.max(minY, area.position.y + area.size.height - height - margin);
+
+    var dist = (80 + Math.random() * 150) * scale;
     var angle = Math.random() * Math.PI * 2;
     var dx = Math.cos(angle) * dist;
     var dy = Math.sin(angle) * dist;
 
-    var targetX = Math.max(SCREEN_MARGIN, Math.min(screen.width - size.width - SCREEN_MARGIN, pos.x + dx));
-    var targetY = Math.max(SCREEN_MARGIN, Math.min(screen.height - size.height - SCREEN_MARGIN, pos.y + dy));
+    var targetX = Math.max(minX, Math.min(maxX, pos.x + dx));
+    var targetY = Math.max(minY, Math.min(maxY, pos.y + dy));
     var actualDx = targetX - pos.x;
     var actualDy = targetY - pos.y;
     var actualDist = Math.sqrt(actualDx * actualDx + actualDy * actualDy);
 
-    if (actualDist < 10) { pet.isWalking = false; returnToBase(); return; }
+    if (actualDist < 10 * scale) { pet.isWalking = false; returnToBase(); return; }
 
     pet.canvas.style.transform = actualDx < 0 ? 'scaleX(-1)' : 'scaleX(1)';
 
-    var duration = actualDist / WALK_SPEED;
+    var duration = actualDist / (WALK_SPEED * scale);
     var startTime = performance.now();
 
     function step() {
@@ -257,7 +284,7 @@ export function initBehavior(pet) {
       var ease = 1 - Math.pow(1 - progress, 2);
       var x = Math.round(pos.x + actualDx * ease);
       var y = Math.round(pos.y + actualDy * ease);
-      pet.appWindow.setPosition({ type: 'Logical', x: x, y: y }).catch(function() {});
+      pet.appWindow.setPosition({ type: 'Physical', x: x, y: y }).catch(function() {});
       if (progress < 1) {
         requestAnimationFrame(step);
       } else {
